@@ -22,10 +22,25 @@ std::vector<std::string> CommandLineListener::getKeysDown()
             // check if the key is down
             if (GetAsyncKeyState(i) & 0x8000)
             {
-                char keyName[128];
-                GetKeyNameTextA(i << 16, keyName, 128);
-                std::cout << keyName << std::endl;
-                keysDown.push_back(std::string(keyName));
+                // convert from keycode to string
+                // we'll use the windows api for this
+
+                UINT scanCode = MapVirtualKey(i, MAPVK_VK_TO_VSC);
+                long lParamValue = (scanCode << 16);
+                WCHAR lpStr[16];
+                int result = GetKeyNameTextW(lParamValue, lpStr, 16);
+
+                if (result == 0) continue;
+
+                // convert to string
+                // we'll use the windows api for this
+                // we'll also convert to lowercase
+                // and remove any spaces
+                std::wstring wstr(lpStr);
+                std::string key(wstr.begin(), wstr.end());
+
+                // now push the key to the vector
+                keysDown.push_back(key);
             }
         }
 
