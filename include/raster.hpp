@@ -1,7 +1,6 @@
 #ifndef __RASTER_H__
 #define __RASTER_H__
 
-
 // Header file for all things related to rasterization
 // Rendering, rasterization, etc.
 

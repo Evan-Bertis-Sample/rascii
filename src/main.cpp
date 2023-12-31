@@ -9,6 +9,7 @@
 #include <iostream>
 #include "tex.hpp"
 #include "raster.hpp"
+#include "runtime_input.hpp"
 
 int main() {
     std::cout << "Hello World" << std::endl;
@@ -38,6 +39,12 @@ int main() {
 
     // test output texture
     AsciiRasterizer r(20, 20);
-    r.render(t);
+    
+    // update loop
+    while (true) {
+        // listen to input
+        InputListener::listen();
+    }
+
     return 0;
 }
