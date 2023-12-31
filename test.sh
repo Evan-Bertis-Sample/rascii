@@ -1,0 +1,1 @@
+./bin/rascii_test.exe
