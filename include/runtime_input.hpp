@@ -119,35 +119,8 @@ class CommandLineListener
 {
 public:
     /// @brief Gets the keys that are currently down -- no state
-    static std::vector<std::string> getKeysDown()
-    {
-        {
-            // use the windows api to get the keys
-            std::vector<std::string> keysDown;
-
-            // loop through all the keys
-            for (int i = 0; i < 256; i++)
-            {
-                // check if the key is down
-                if (GetAsyncKeyState(i) & 0x8000)
-                {
-                    char keyName[128];
-                    GetKeyNameTextA(i << 16, keyName, 128);
-                    std::cout << keyName << std::endl;
-                    keysDown.push_back(std::string(keyName));
-                }
-            }
-
-            return keysDown;
-        }
-    }
-
-    static Vec getMousePosition()
-    {
-        POINT p;
-        GetCursorPos(&p);
-        return Vec(p.x, p.y, 0);
-    }
+    static std::vector<std::string> getKeysDown();
+    static Vec getMousePosition();
 };
 
 /// @brief A class that listens for input during the update loop

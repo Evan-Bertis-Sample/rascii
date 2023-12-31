@@ -9,6 +9,39 @@
 #include "runtime_input.hpp"
 #include "vec.hpp"
 
+// CommandLineListener
+std::vector<std::string> CommandLineListener::getKeysDown()
+{
+    {
+        // use the windows api to get the keys
+        std::vector<std::string> keysDown;
+
+        // loop through all the keys
+        for (int i = 0; i < 256; i++)
+        {
+            // check if the key is down
+            if (GetAsyncKeyState(i) & 0x8000)
+            {
+                char keyName[128];
+                GetKeyNameTextA(i << 16, keyName, 128);
+                std::cout << keyName << std::endl;
+                keysDown.push_back(std::string(keyName));
+            }
+        }
+
+        return keysDown;
+    }
+}
+
+Vec CommandLineListener::getMousePosition()
+{
+    POINT p;
+    GetCursorPos(&p);
+    return Vec(p.x, p.y, 0);
+}
+
+// InputListener
+
 void InputListener::listen()
 {
     std::vector<std::string> keysDown = CommandLineListener::getKeysDown();
