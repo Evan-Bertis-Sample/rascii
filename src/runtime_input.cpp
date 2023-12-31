@@ -30,7 +30,8 @@ std::vector<std::string> CommandLineListener::getKeysDown()
                 WCHAR lpStr[16];
                 int result = GetKeyNameTextW(lParamValue, lpStr, 16);
 
-                if (result == 0) continue;
+                if (result == 0)
+                    continue;
 
                 // convert to string
                 // we'll use the windows api for this
@@ -176,6 +177,55 @@ void InputListener::_handleButtonUp(std::string &key)
 }
 
 // listeners
+WASDListener::WASDListener(InputListener &InputListener)
+{
+    // add the callbacks
+    char keys[4] = {'W', 'A', 'S', 'D'};
+    for (char key : keys)
+    {
+        std::cout << "WASDListener: Adding callback for " << key << std::endl;
+        std::function<void()> onPress = std::bind(&WASDListener::OnPress, this, key);
+        std::function<void()> onRelease = std::bind(&WASDListener::OnRelease, this, key);
+        PressCallback callback(
+            onPress, nullptr, onRelease
+        );
+        InputListener.addCallback(std::string(1, key), callback);
+    }
+    
+}
+
+Vec WASDListener::getAxis()
+{
+    Vec axis;
+    if (this->w) axis.y += 1;
+    if (this->a) axis.x -= 1;
+    if (this->s) axis.y -= 1;
+    if (this->d) axis.x += 1;
+    return axis;
+}
+
+void WASDListener::OnPress(char key)
+{
+    std::cout << "WASDListener: OnPress called for " << key << std::endl;
+    if (key == 'W') this->w = true;
+    if (key == 'A') this->a = true;
+    if (key == 'S') this->s = true;
+    if (key == 'D') this->d = true;
+
+    std::cout << "WASDListener: Axis is now " << this->getAxis().toString() << std::endl;
+}
+
+void WASDListener::OnRelease(char key)
+{
+    std::cout << "WASDListener: OnRelease called for " << key << std::endl;
+    if (key == 'W') this->w = false;
+    if (key == 'A') this->a = false;
+    if (key == 'S') this->s = false;
+    if (key == 'D') this->d = false;
+
+    std::cout << "WASDListener: Axis is now " << this->getAxis().toString() << std::endl;
+}
+
 Vec MouseListener::getAxis()
 {
     return CommandLineListener::getMousePosition();

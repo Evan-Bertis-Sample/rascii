@@ -25,7 +25,7 @@ void releaseCallback () {
 }
 
 void vecCallback (Vec v) {
-    // std::cout << v.toStriaaaaaaaang() << std::endl;
+    std::cout << v.toString() << std::endl;
 }
 
 int main() {
@@ -65,17 +65,14 @@ int main() {
         releaseCallback
     );
 
-    inputListener.addCallback("A", buttonCallback);
-
-    MouseListener listener;
-
-    VecCallback mouseCallback(
+    // inputListener.addCallback("A", buttonCallback);
+    WASDListener listener = WASDListener(inputListener);
+    VecCallback testVecCallback(
         vecCallback
     );
+    listener.addCallback(testVecCallback);
 
-    listener.addCallback(mouseCallback);
-
-    inputListener.addAxisListener(std::make_shared<MouseListener>(listener));
+    inputListener.addAxisListener(std::make_shared<WASDListener>(listener));
     // update loop
     while (true) {
         inputListener.listen();

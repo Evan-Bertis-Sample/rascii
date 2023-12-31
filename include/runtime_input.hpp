@@ -110,14 +110,27 @@ private:
     std::vector<VecCallback> callbacks;
 };
 
+class InputListener;
+
 /// @brief A class that listens to the WASD keys for input during the update loop
 /// @details This class is responsible for listening to the WASD keys for input during the update loop
-class WASDListner : public AxisListener
+class WASDListener : public AxisListener
 {
 public:
+    WASDListener() : AxisListener() {}
+
+    WASDListener(InputListener &inputListener);
+
     /// @brief Gets the axis
     /// @details Gets the axis -- constructs a vector from the WASD keys
     Vec getAxis();
+
+    void OnPress(char key);
+    void OnRelease(char key);
+
+private:
+    bool w, a, s, d = false;
+
 };
 
 /// @brief A class that listens to the mouse for input during the update loop
