@@ -201,29 +201,24 @@ Vec WASDListener::getAxis()
     if (this->a) axis.x -= 1;
     if (this->s) axis.y -= 1;
     if (this->d) axis.x += 1;
+
     return axis;
 }
 
 void WASDListener::OnPress(char key)
 {
-    std::cout << "WASDListener: OnPress called for " << key << std::endl;
     if (key == 'W') this->w = true;
     if (key == 'A') this->a = true;
     if (key == 'S') this->s = true;
     if (key == 'D') this->d = true;
-
-    std::cout << "WASDListener: Axis is now " << this->getAxis().toString() << std::endl;
 }
 
 void WASDListener::OnRelease(char key)
 {
-    std::cout << "WASDListener: OnRelease called for " << key << std::endl;
     if (key == 'W') this->w = false;
     if (key == 'A') this->a = false;
     if (key == 'S') this->s = false;
     if (key == 'D') this->d = false;
-
-    std::cout << "WASDListener: Axis is now " << this->getAxis().toString() << std::endl;
 }
 
 Vec MouseListener::getAxis()

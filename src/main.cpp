@@ -66,13 +66,13 @@ int main() {
     );
 
     // inputListener.addCallback("A", buttonCallback);
-    WASDListener listener = WASDListener(inputListener);
+    std::shared_ptr<WASDListener> listener = std::make_shared<WASDListener>(inputListener);
     VecCallback testVecCallback(
         vecCallback
     );
-    listener.addCallback(testVecCallback);
-
-    inputListener.addAxisListener(std::make_shared<WASDListener>(listener));
+    listener->addCallback(testVecCallback);
+    
+    inputListener.addAxisListener(listener);
     // update loop
     while (true) {
         inputListener.listen();

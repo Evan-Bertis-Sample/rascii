@@ -129,8 +129,10 @@ public:
     void OnRelease(char key);
 
 private:
-    bool w, a, s, d = false;
-
+    bool w = false;
+    bool a = false;
+    bool s = false;
+    bool d = false;
 };
 
 /// @brief A class that listens to the mouse for input during the update loop
@@ -176,7 +178,7 @@ public:
     // Axis callbacks
     void addAxisListener(std::shared_ptr<AxisListener> listener)
     {
-        this->axisListeners.push_back(listener);
+        this->axisListeners.emplace_back(listener);
     }
 
 private:
