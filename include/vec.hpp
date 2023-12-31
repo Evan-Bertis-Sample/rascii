@@ -4,9 +4,13 @@
 // Header files for all things related to vectors
 // Default implementation is 4D vectors
 
+#include <string>
+#include <sstream>
+
 /// @brief A compact representation of a vector
 /// @details A vector is represented by 4 floats, one for each dimension
-struct Vec {
+struct Vec
+{
     float x, y, z, w;
 
     /// @brief Default constructor
@@ -16,6 +20,13 @@ struct Vec {
     /// @brief Constructor
     /// @details Initializes the vector to the given values
     Vec(float x, float y, float z, float w = 1.0f) : x(x), y(y), z(z), w(w) {}
+
+    std::string toString() const
+    {
+        std::stringstream ss;
+        ss << "(" << x << ", " << y << ", " << z << ", " << w << ")";
+        return ss.str();
+    }
 };
 
 #endif // __VEC_H__

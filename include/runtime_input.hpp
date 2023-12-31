@@ -92,10 +92,19 @@ class AxisListener
 public:
     /// @brief Gets the axis
     /// @details Gets the axis -- this is abstract, and must be implemented by the child class
-    virtual Vec getAxis() = 0;
+    virtual Vec getAxis() { return Vec(); }
     void addCallback(VecCallback callback)
     {
         this->callbacks.push_back(callback);
+    }
+
+    void update()
+    {
+        Vec v = this->getAxis();
+        for (VecCallback callback : this->callbacks)
+        {
+            callback.update(v);
+        }
     }
 
 private:
@@ -109,6 +118,16 @@ class WASDListner : public AxisListener
 public:
     /// @brief Gets the axis
     /// @details Gets the axis -- constructs a vector from the WASD keys
+    Vec getAxis();
+};
+
+/// @brief A class that listens to the mouse for input during the update loop
+/// @details This class is responsible for listening to the mouse for input during the update loop
+class MouseListener : public AxisListener
+{
+public:
+    /// @brief Gets the axis
+    /// @details Gets the axis -- constructs a vector from the mouse position
     Vec getAxis();
 };
 

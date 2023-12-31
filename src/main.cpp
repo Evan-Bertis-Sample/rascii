@@ -7,9 +7,26 @@
 //
 
 #include <iostream>
+#include <memory>
 #include "tex.hpp"
 #include "raster.hpp"
 #include "runtime_input.hpp"
+
+void pressCallback () {
+    std::cout << "Pressed" << std::endl;
+}
+
+void holdCallback () {
+    std::cout << "Held" << std::endl;
+}
+
+void releaseCallback () {
+    std::cout << "Released" << std::endl;
+}
+
+void vecCallback (Vec v) {
+    std::cout << v.toString() << std::endl;
+}
 
 int main() {
     std::cout << "Hello World" << std::endl;
@@ -41,6 +58,24 @@ int main() {
     AsciiRasterizer r(20, 20);
     
     InputListener inputListener;
+
+    PressCallback buttonCallback(
+        pressCallback,
+        holdCallback,
+        releaseCallback
+    );
+
+    inputListener.addCallback("A", buttonCallback);
+
+    MouseListener listener;
+
+    VecCallback mouseCallback(
+        vecCallback
+    );
+
+    listener.addCallback(mouseCallback);
+
+    inputListener.addAxisListener(std::make_shared<MouseListener>(listener));
     // update loop
     while (true) {
         inputListener.listen();

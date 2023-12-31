@@ -37,7 +37,7 @@ Vec CommandLineListener::getMousePosition()
 {
     POINT p;
     GetCursorPos(&p);
-    return Vec(p.x, p.y, 0);
+    return Vec(p.x, p.y, 0, 0);
 }
 
 // InputListener
@@ -68,6 +68,12 @@ void InputListener::listen()
                 this->_handleButtonUp(key);
             }
         }
+    }
+
+    // now we need to call the axis listeners
+    for (std::shared_ptr<AxisListener> listener : this->axisListeners)
+    {
+        listener->update();
     }
 }
 
@@ -161,4 +167,10 @@ void InputListener::_handleButtonUp(std::string &key)
         stateMap[key] = BUTTON_UP;
         break;
     }
+}
+
+// listeners
+Vec MouseListener::getAxis()
+{
+    return CommandLineListener::getMousePosition();
 }
