@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include "tex.hpp"
+#include "raster.hpp"
 
 int main() {
     std::cout << "Hello World" << std::endl;
@@ -32,5 +33,11 @@ int main() {
     Color c5 = Color::greyscale(0.5f);
     std::cout << c5.toString() << std::endl;
 
+    // test make a texture
+    Texture t(20, 20, c5);
+
+    // test output texture
+    AsciiRasterizer r(20, 20);
+    r.render(t);
     return 0;
 }

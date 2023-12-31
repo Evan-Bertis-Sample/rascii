@@ -151,6 +151,12 @@ public:
         }
     }
 
+    Texture(int width, int height, const Color& c) : _width(width), _height(height), _pixels(new Color[width * height]) {
+        for (int i = 0; i < width * height; i++) {
+            _pixels[i] = c;
+        }
+    }
+
     /// @brief Copy constructor
     /// @details Initializes the texture to a copy of the given texture
     Texture(const Texture& t) : _width(t._width), _height(t._height), _pixels(new Color[t._width * t._height]) {
