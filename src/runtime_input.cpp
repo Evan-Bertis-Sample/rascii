@@ -68,8 +68,7 @@ void InputListener::listen()
     // now we need to check if any buttons were released
     // we'll do this by checking if any buttons were down last frame
     // and if they're not down this frame, we'll assume they were released
-    std::map<std::string, ButtonState> stateMap = this->buttonStates;
-    for (std::pair<std::string, ButtonState> pair : stateMap)
+    for (std::pair<std::string, ButtonState> pair : this->buttonStates)
     {
         std::string key = pair.first;
         ButtonState state = pair.second;
@@ -106,13 +105,12 @@ void InputListener::_handleButtonDown(std::string &key)
     std::vector<PressCallback> callbacks = callbackMap[key];
 
     // get the state of the button
-    // first check if it exists in our statemap
+    // first check if it exists in our this->buttonStates
     // if it doesn't, we'll assume it's up
     ButtonState state = BUTTON_UP;
-    std::map<std::string, ButtonState> stateMap = this->buttonStates;
-    if (stateMap.find(key) != stateMap.end())
+    if (this->buttonStates.find(key) != this->buttonStates.end())
     {
-        state = stateMap[key];
+        state = this->buttonStates[key];
     }
 
     switch (state)
@@ -125,7 +123,7 @@ void InputListener::_handleButtonDown(std::string &key)
         }
 
         // update the state
-        stateMap[key] = BUTTON_DOWN;
+        this->buttonStates[key] = BUTTON_DOWN;
         break;
     case BUTTON_DOWN:
         // call the onHold callback
@@ -133,12 +131,6 @@ void InputListener::_handleButtonDown(std::string &key)
         {
             callback.hold();
         }
-
-        // update the state
-        stateMap[key] = BUTTON_HELD;
-        break;
-    case BUTTON_HELD:
-        // do nothing
         break;
     }
 }
@@ -157,13 +149,12 @@ void InputListener::_handleButtonUp(std::string &key)
     std::vector<PressCallback> callbacks = callbackMap[key];
 
     // get the state of the button
-    // first check if it exists in our statemap
+    // first check if it exists in our this->buttonStates
     // if it doesn't, we'll assume it's up
     ButtonState state = BUTTON_UP;
-    std::map<std::string, ButtonState> stateMap = this->buttonStates;
-    if (stateMap.find(key) != stateMap.end())
+    if (this->buttonStates.find(key) != this->buttonStates.end())
     {
-        state = stateMap[key];
+        state = this->buttonStates[key];
     }
 
     switch (state)
@@ -179,7 +170,7 @@ void InputListener::_handleButtonUp(std::string &key)
         }
 
         // update the state
-        stateMap[key] = BUTTON_UP;
+        this->buttonStates[key] = BUTTON_UP;
         break;
     }
 }

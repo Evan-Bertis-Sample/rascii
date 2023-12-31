@@ -58,7 +58,6 @@ enum ButtonState
 {
     BUTTON_UP,
     BUTTON_DOWN,
-    BUTTON_HELD
 };
 
 typedef std::map<std::string, std::vector<PressCallback>> PressCallbackMap;

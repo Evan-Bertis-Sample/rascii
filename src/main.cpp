@@ -25,7 +25,7 @@ void releaseCallback () {
 }
 
 void vecCallback (Vec v) {
-    // std::cout << v.toString() << std::endl;
+    // std::cout << v.toStriaaaaaaaang() << std::endl;
 }
 
 int main() {
