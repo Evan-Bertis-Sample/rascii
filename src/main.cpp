@@ -40,10 +40,10 @@ int main() {
     // test output texture
     AsciiRasterizer r(20, 20);
     
+    InputListener inputListener;
     // update loop
     while (true) {
-        // listen to input
-        InputListener::listen();
+        inputListener.listen();
     }
 
     return 0;
