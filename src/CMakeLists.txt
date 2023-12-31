@@ -1,5 +1,8 @@
-# Add an executable
-add_executable(rascii main.cpp)
+# Gather all .cpp files in your src directory
+file(GLOB SOURCES "*.cpp")
+
+# Add an executable with your sources
+add_executable(rascii ${SOURCES})
 
 # Explicitly state that this is not a WIN32 executable
 set_target_properties(rascii PROPERTIES

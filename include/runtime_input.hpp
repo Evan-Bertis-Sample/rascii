@@ -14,6 +14,7 @@
 #include <memory>
 #include "vec.hpp"
 
+#pragma region ButtonHandling
 struct PressCallback
 {
 public:
@@ -62,6 +63,9 @@ enum ButtonState
 
 typedef std::map<std::string, std::vector<PressCallback>> PressCallbackMap;
 
+#pragma endregion
+
+#pragma region AxisHandling
 struct VecCallback
 {
 public:
@@ -108,6 +112,8 @@ public:
     Vec getAxis();
 };
 
+#pragma endregion
+
 /// @brief A class that listens for input from the command line
 class CommandLineListener
 {
@@ -135,7 +141,13 @@ public:
             return keysDown;
         }
     }
-    static Vec getMousePosition();
+
+    static Vec getMousePosition()
+    {
+        POINT p;
+        GetCursorPos(&p);
+        return Vec(p.x, p.y, 0);
+    }
 };
 
 /// @brief A class that listens for input during the update loop
@@ -149,34 +161,7 @@ public:
     InputListener() {}
 
     /// @brief Listens for input during the update loop
-    void listen()
-    {
-        std::vector<std::string> keysDown = CommandLineListener::getKeysDown();
-        for (std::string key : keysDown)
-        {
-            this->_handleButtonDown(key);
-        }
-
-        // now we need to check if any buttons were released
-        // we'll do this by checking if any buttons were down last frame
-        // and if they're not down this frame, we'll assume they were released
-        std::map<std::string, ButtonState> stateMap = this->buttonStates;
-        for (std::pair<std::string, ButtonState> pair : stateMap)
-        {
-            std::string key = pair.first;
-            ButtonState state = pair.second;
-
-            if (state == BUTTON_DOWN)
-            {
-                // check if the key is not included in the keysDown vector
-                // if it isn't, we'll assume it was released
-                if (std::find(keysDown.begin(), keysDown.end(), key) == keysDown.end())
-                {
-                    this->_handleButtonUp(key);
-                }
-            }
-        }
-    }
+    void listen();
 
     // Button callbacks
     void addCallback(std::string key, PressCallback callback)
@@ -196,97 +181,8 @@ private:
     std::vector<std::shared_ptr<AxisListener>> axisListeners;
 
     // responsible for calling the appropriate callbacks, and updating the button states
-    void _handleButtonDown(std::string key)
-    {
-        // check if there are any callbacks for this button
-        // if there aren't, we can just ignore it
-        PressCallbackMap callbackMap = this->buttonCallbacks;
-        if (callbackMap.find(key) == callbackMap.end())
-        {
-            return;
-        }
-
-        // get the callbacks for this button
-        std::vector<PressCallback> callbacks = callbackMap[key];
-
-        // get the state of the button
-        // first check if it exists in our statemap
-        // if it doesn't, we'll assume it's up
-        ButtonState state = BUTTON_UP;
-        std::map<std::string, ButtonState> stateMap = this->buttonStates;
-        if (stateMap.find(key) != stateMap.end())
-        {
-            state = stateMap[key];
-        }
-
-        switch (state)
-        {
-        case BUTTON_UP:
-            // call the onPress callback
-            for (PressCallback callback : callbacks)
-            {
-                callback.press();
-            }
-
-            // update the state
-            stateMap[key] = BUTTON_DOWN;
-            break;
-        case BUTTON_DOWN:
-            // call the onHold callback
-            for (PressCallback callback : callbacks)
-            {
-                callback.hold();
-            }
-
-            // update the state
-            stateMap[key] = BUTTON_HELD;
-            break;
-        case BUTTON_HELD:
-            // do nothing
-            break;
-        }
-    }
-
-    void _handleButtonUp(std::string key)
-    {
-        // check if there are any callbacks for this button
-        // if there aren't, we can just ignore it
-        PressCallbackMap callbackMap = this->buttonCallbacks;
-        if (callbackMap.find(key) == callbackMap.end())
-        {
-            return;
-        }
-
-        // get the callbacks for this button
-        std::vector<PressCallback> callbacks = callbackMap[key];
-
-        // get the state of the button
-        // first check if it exists in our statemap
-        // if it doesn't, we'll assume it's up
-        ButtonState state = BUTTON_UP;
-        std::map<std::string, ButtonState> stateMap = this->buttonStates;
-        if (stateMap.find(key) != stateMap.end())
-        {
-            state = stateMap[key];
-        }
-
-        switch (state)
-        {
-        case BUTTON_UP:
-            // do nothing
-            break;
-        default:
-            // call the onRelease callback
-            for (PressCallback callback : callbacks)
-            {
-                callback.release();
-            }
-
-            // update the state
-            stateMap[key] = BUTTON_UP;
-            break;
-        }
-    }
+    void _handleButtonDown(std::string &key);
+    void _handleButtonUp(std::string &key);
 };
 
 #endif // __RUNTIME_INPUT_H__
