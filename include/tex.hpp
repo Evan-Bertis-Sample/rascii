@@ -14,7 +14,8 @@ struct Vec;
 
 /// @brief A compact representation of a color
 /// @details A color is represented by 4 bytes, one for each channel
-struct Color {
+struct Color
+{
 public:
     unsigned char r, g, b, a;
 
@@ -28,28 +29,30 @@ public:
 
     /// @brief Copy constructor
     /// @details Initializes the color to the given color
-    Color(const Color& c) : r(c.r), g(c.g), b(c.b), a(c.a) {}
+    Color(const Color &c) : r(c.r), g(c.g), b(c.b), a(c.a) {}
 
     /// @brief Float constructor
     /// @details Initializes the color to the given values from floats (0-1)
-    static Color fromFloat(float r, float g, float b, float a = 1.0f) {
+    static Color fromFloat(float r, float g, float b, float a = 1.0f)
+    {
         return Color(
             Color::toChar(r),
             Color::toChar(g),
             Color::toChar(b),
-            Color::toChar(a)
-        );
+            Color::toChar(a));
     }
 
     /// @brief Greyscale constructor
     /// @details Creates a greyscale color from the given value (0-1)
-    static Color greyscale(float v) {
+    static Color greyscale(float v)
+    {
         return Color::fromFloat(v, v, v);
     }
 
     /// @brief Assignment operator
     /// @details Assigns the color to the given color
-    Color& operator=(const Color& c) {
+    Color &operator=(const Color &c)
+    {
         r = c.r;
         g = c.g;
         b = c.b;
@@ -59,19 +62,22 @@ public:
 
     /// @brief Addition operator
     /// @details Adds the given color to this color
-    Color operator+(const Color& c) const {
+    Color operator+(const Color &c) const
+    {
         return Color(r + c.r, g + c.g, b + c.b, a + c.a);
     }
 
     /// @brief Subtraction operator
     /// @details Subtracts the given color from this color
-    Color operator-(const Color& c) const {
+    Color operator-(const Color &c) const
+    {
         return Color(r - c.r, g - c.g, b - c.b, a - c.a);
     }
 
     /// @brief Multiplication operator
     /// @details Multiplies the given color with this color
-    Color operator*(const Color& c) const {
+    Color operator*(const Color &c) const
+    {
         // Convert to float, to avoid overflow
         float fr = this->toFloat(r);
         float fg = this->toFloat(g);
@@ -88,7 +94,8 @@ public:
 
     /// @brief Scalar multiplication operator
     /// @details Multiplies the given color with a float (0-1)
-    Color operator*(float f) const {
+    Color operator*(float f) const
+    {
         // Convert to float, to avoid overflow
         float fr = this->toFloat(r);
         float fg = this->toFloat(g);
@@ -97,7 +104,8 @@ public:
         return Color::fromFloat(fr * f, fg * f, fb * f, fa * f);
     }
 
-    float getLuminance() const {
+    float getLuminance() const
+    {
         float fr = this->toFloat(r);
         float fg = this->toFloat(g);
         float fb = this->toFloat(b);
@@ -110,7 +118,8 @@ public:
 
     /// @brief Converts the color to a string
     /// @details Converts the color to a string
-    std::string toString() const {
+    std::string toString() const
+    {
         float fr = this->toFloat(r);
         float fg = this->toFloat(g);
         float fb = this->toFloat(b);
@@ -123,62 +132,72 @@ public:
 
 private:
     /// @brief converts 0-255 to 0-1 (char to float)
-    static inline float toFloat(unsigned char c) {
+    static inline float toFloat(unsigned char c)
+    {
         return (float)c / 255.0f;
     }
 
     /// @brief converts 0-1 to 0-255 (float to char)
-    static inline unsigned char toChar(float f) {
+    static inline unsigned char toChar(float f)
+    {
         return (unsigned char)(f * 255.0f);
     }
 };
 
 /// @brief A compact representation of a texture
 /// @details A texture is represented by a 2D array of colors
-struct Texture {
+struct Texture
+{
 public:
     /// @brief Default constructor
     /// @details Initializes the texture to a 1x1 black texture
-    Texture() : _width(1), _height(1), _pixels(new Color[1]) {
+    Texture() : _width(1), _height(1), _pixels(new Color[1])
+    {
         _pixels[0] = Color();
     }
 
     /// @brief Constructor
     /// @details Initializes the texture to a given size
-    Texture(int width, int height) : _width(width), _height(height), _pixels(new Color[width * height]) {
-        for (int i = 0; i < width * height; i++) {
+    Texture(int width, int height) : _width(width), _height(height), _pixels(new Color[width * height])
+    {
+        for (int i = 0; i < width * height; i++)
+        {
             _pixels[i] = Color();
         }
     }
 
-    Texture(int width, int height, const Color& c) : _width(width), _height(height), _pixels(new Color[width * height]) {
-        for (int i = 0; i < width * height; i++) {
+    Texture(int width, int height, const Color &c) : _width(width), _height(height), _pixels(new Color[width * height])
+    {
+        for (int i = 0; i < width * height; i++)
+        {
             _pixels[i] = c;
         }
     }
 
     /// @brief Copy constructor
-    /// @details Initializes the texture to a copy of the given texture
-    Texture(const Texture& t) : _width(t._width), _height(t._height), _pixels(new Color[t._width * t._height]) {
-        for (int i = 0; i < _width * _height; i++) {
-            _pixels[i] = t._pixels[i];
-        }
+    /// @details Initializes the texture to a copy of the given texture -- shallow copy
+    Texture(const Texture &t) : _width(t._width), _height(t._height), _pixels(t._pixels)
+    {
+        std::cout << "Texture copy constructor" << std::endl;
     }
 
     /// @brief Destructor
     /// @details Deletes the texture
-    ~Texture() {
+    ~Texture()
+    {
         delete[] _pixels;
     }
 
     /// @brief Assignment operator
     /// @details Assigns the texture to the given texture
-    Texture& operator=(const Texture& t) {
+    Texture &operator=(const Texture &t)
+    {
         _width = t._width;
         _height = t._height;
         delete[] _pixels;
         _pixels = new Color[_width * _height];
-        for (int i = 0; i < _width * _height; i++) {
+        for (int i = 0; i < _width * _height; i++)
+        {
             _pixels[i] = t._pixels[i];
         }
         return *this;
@@ -186,31 +205,213 @@ public:
 
     /// @brief Gets the color at the given coordinates
     /// @details Gets the color at the given coordinates
-    Color get(int x, int y) const {
+    Color get(int x, int y) const
+    {
         return _pixels[y * _width + x];
     }
 
     /// @brief Sets the color at the given coordinates
     /// @details Sets the color at the given coordinates
-    void set(int x, int y, const Color& c) {
+    void set(int x, int y, const Color &c)
+    {
         _pixels[y * _width + x] = c;
     }
 
     /// @brief Gets the width of the texture
     /// @details Gets the width of the texture
-    int getWidth() const {
+    int getWidth() const
+    {
         return _width;
     }
 
     /// @brief Gets the height of the texture
     /// @details Gets the height of the texture
-    int getHeight() const {
+    int getHeight() const
+    {
         return _height;
+    }
+
+    Vec getTopLeft() const
+    {
+        return Vec(0, 0, 0, 0);
+    }
+
+    Vec getTopRight() const
+    {
+        return Vec(_width, 0, 0, 0);
+    }
+
+    Vec getBottomLeft() const
+    {
+        return Vec(0, _height, 0, 0);
+    }
+
+    Vec getBottomRight() const
+    {
+        return Vec(_width, _height, 0, 0);
+    }
+
+    /// @brief Converts the texture to a string
+    /// @details Converts the texture to a string
+    std::string toString() const
+    {
+        std::stringstream ss;
+        ss << "Texture(" << _width << ", " << _height << ")";
+        for (int y = 0; y < _height; y++)
+        {
+            ss << std::endl;
+            for (int x = 0; x < _width; x++)
+            {
+                ss << get(x, y).toString() << " ";
+            }
+        }
+
+        return ss.str();
     }
 
 private:
     int _width, _height;
-    Color* _pixels;
+    Color *_pixels;
+};
+
+/// @brief A class that is responsible for drawing on a texture
+class TextureDrawer
+{
+public:
+    /// @brief Default constructors
+    TextureDrawer() : _texture(std::shared_ptr<Texture>()) {}
+    TextureDrawer(std::shared_ptr<Texture> texture) : _texture(texture) {}
+
+    /// @brief Draws a line on the texture
+    /// @details Draws a line on the texture
+    /// @param x1 The x coordinate of the first point
+    /// @param y1 The y coordinate of the first point
+    /// @param x2 The x coordinate of the second point
+    /// @param y2 The y coordinate of the second point
+    /// @param c The color of the line
+    void drawLine(int x1, int y1, int x2, int y2, const Color &c)
+    {
+        // Bresenham's line algorithm
+        // https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+        int dx = std::abs(x2 - x1);
+        int dy = std::abs(y2 - y1);
+        int sx = x1 < x2 ? 1 : -1;
+        int sy = y1 < y2 ? 1 : -1;
+        int err = dx - dy;
+        while (true)
+        {
+            _texture->set(x1, y1, c);
+            if (x1 == x2 && y1 == y2)
+            {
+                break;
+            }
+            int e2 = 2 * err;
+            if (e2 > -dy)
+            {
+                err -= dy;
+                x1 += sx;
+            }
+            if (e2 < dx)
+            {
+                err += dx;
+                y1 += sy;
+            }
+        }
+    }
+
+    /// @brief Draws a line on the texture
+    /// @details Draws a line on the texture
+    /// @param p1 The first point
+    /// @param p2 The second point
+    /// @param c The color of the line
+    void drawLine(const Vec &p1, const Vec &p2, const Color &c)
+    {
+        drawLine(p1.x, p1.y, p2.x, p2.y, c);
+    }
+
+    /// @brief Draws a triangle outline on the texture
+    /// @details Draws a triangle outline on the texture
+    /// @param p1 The first point
+    /// @param p2 The second point
+    /// @param p3 The third point
+    /// @param c The color of the triangle outline
+    void drawTriangle(const Vec &p1, const Vec &p2, const Vec &p3, const Color &c)
+    {
+        drawLine(p1, p2, c);
+        drawLine(p2, p3, c);
+        drawLine(p3, p1, c);
+    }
+
+    /// @brief Draws a circle outline on the Texture
+    /// @details Draws a circle outline on the Texture
+    /// @param x The x coordinate of the center of the circle
+    /// @param y The y coordinate of the center of the circle
+    /// @param r The radius of the circle
+    /// @param c The color of the circle outline
+    void drawCircle(int x, int y, float r, const Color &c)
+    {
+        // Bresenham's circle algorithm
+        // https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
+        int f = 1 - r;
+        int ddF_x = 1;
+        int ddF_y = -2 * r;
+        int cx = 0;
+        int cy = r;
+
+        _texture->set(x, y + r, c);
+        _texture->set(x, y - r, c);
+        _texture->set(x + r, y, c);
+        _texture->set(x - r, y, c);
+
+        while (cx < cy)
+        {
+            if (f >= 0)
+            {
+                cy--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            cx++;
+            ddF_x += 2;
+            f += ddF_x;
+
+            _texture->set(x + cx, y + cy, c);
+            _texture->set(x - cx, y + cy, c);
+            _texture->set(x + cx, y - cy, c);
+            _texture->set(x - cx, y - cy, c);
+            _texture->set(x + cy, y + cx, c);
+            _texture->set(x - cy, y + cx, c);
+            _texture->set(x + cy, y - cx, c);
+            _texture->set(x - cy, y - cx, c);
+        }
+    }
+
+    /// @brief Draws a circle outline on the Texture
+    /// @details Draws a circle outline on the Texture
+    /// @param p The center of the circle
+    /// @param r The radius of the circle
+    /// @param c The color of the circle outline
+    void drawCircle(const Vec &p, float r, const Color &c)
+    {
+        drawCircle(p.x, p.y, r, c);
+    }
+
+    /// @brief Fills a texture with a color
+    /// @details Fills a texture with a color
+    /// @param c The color to fill the texture with
+    void fill(const Color &c)
+    {
+        for (int y = 0; y < _texture->getHeight(); y++)
+        {
+            for (int x = 0; x < _texture->getWidth(); x++)
+            {
+                _texture->set(x, y, c);
+            }
+        }
+    }
+
+private:
+    std::shared_ptr<Texture> _texture;
 };
 
 #endif // __TEX_H__

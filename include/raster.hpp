@@ -67,16 +67,21 @@ public:
         int renderWidth = std::min(_width, texWidth);
         int renderHeight = std::min(_height, texHeight);
 
+        std::stringstream ss;
+        
         // loop through each pixel in the render
         for (int y = 0; y < renderHeight; y++) {
             for (int x = 0; x < renderWidth; x++) {
                 float luminance = tex.get(x, y).getLuminance();
+                // std::cout << "luminance: " << luminance << std::endl;
                 char c = this->luminanceToAscii(luminance);
-                *(this->out) << c;
+                ss << c;
             }
             // ouptput a newline
-            *(this->out) << std::endl;
+            ss << "\n";
         }
+
+        std::cout << ss.str();
     }
 
 private:
@@ -88,14 +93,14 @@ private:
     std::ostream* out;
 
     // used to convert luminance to ascii characters
-    const char* const _luminanceTable = " .:-=+*#%@";
-    const int _luminanceTableSize = 11;
+    const char* _luminanceTable = " .:-=+*#%@";
+    const int _luminanceTableSize = 10;
 
     /// @brief Converts the given luminance to an ascii character
     /// @details This function converts the given luminance to an ascii character
     /// @param luminance The luminance to convert
     /// @return The ascii character
-    char luminanceToAscii(float luminance) {
+    char luminanceToAscii(float luminance) const {
         // convert luminance to index
         int index = (int)(luminance * (_luminanceTableSize - 1));
 
