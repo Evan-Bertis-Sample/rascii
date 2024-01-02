@@ -18,6 +18,9 @@ int main() {
         app.onExit(signal);
     });
 
+    // initialize the app
+    app.init();
+    
     // run the app
     app.run();
 

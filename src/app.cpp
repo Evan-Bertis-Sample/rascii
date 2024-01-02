@@ -2,6 +2,7 @@
 #include <memory>
 #include <stdlib.h>
 #include <signal.h>
+
 #include "app.hpp"
 #include "tex.hpp"
 #include "raster.hpp"
@@ -10,9 +11,16 @@
 const int OUTPUT_WIDTH = 100;
 const int OUTPUT_HEIGHT = 64;
 
-App::App() : _rasterizer(OUTPUT_WIDTH, OUTPUT_HEIGHT), _inputListener()
+Controls App::controls = Controls();
+
+App::App() : _rasterizer(OUTPUT_WIDTH, OUTPUT_HEIGHT)
 {
-    // idk
+    std::cout << "Initializing RASCII\n"; 
+}
+
+void App::init()
+{
+    this->_inputListener = App::controls.getInputListener();
 }
 
 void App::run()
@@ -23,17 +31,12 @@ void App::run()
     drawer.drawLine(Vec(0, 0, 0), Vec(OUTPUT_WIDTH, OUTPUT_HEIGHT, 0), Color::greyscale(1.0f));
     drawer.drawCircle(Vec(OUTPUT_WIDTH / 2, OUTPUT_HEIGHT / 2, 0), 10, Color::greyscale(1.0f));
 
-    // test output texture
-    std::shared_ptr<WASDListener> listener = std::make_shared<WASDListener>(this->_inputListener);
-    this->_inputListener.addAxisListener(listener);
-
     // update loop
     while (true)
     {
         this->_rasterizer.prepare();
         this->_rasterizer.render(*texPtr);
-        this->_inputListener.listen();
-        texPtr->blank(Color::greyscale(0.5f));
+        this->_inputListener->listen();
     }
 }
 

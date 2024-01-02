@@ -10,11 +10,22 @@
 #include <functional>
 #include "raster.hpp"
 #include "runtime_input.hpp"
+#include "control.hpp"
 
 class App {
 public:
+    // static members
+    /// @brief The controls for the application
+    /// @details This is a static member, and is shared across all instances of the App class
+    /// @details Use to add callbacks to the controls
+    static Controls controls;
+
     App();
     ~App();
+
+    /// @brief Initializes the application
+    /// @details This function is called before the main loop
+    void init();
 
     /// @brief Runs the application
     /// @details This is the main function of the application
@@ -24,8 +35,8 @@ public:
     /// @details This function is called before the main loop
     void onExit(int exitCode);
 private:
+    std::shared_ptr<InputListener> _inputListener;
     AsciiRasterizer _rasterizer;
-    InputListener _inputListener;
 };
 
 #endif // __APP_H__

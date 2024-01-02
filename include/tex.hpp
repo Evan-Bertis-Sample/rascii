@@ -413,13 +413,7 @@ public:
     /// @param c The color to fill the texture with
     void fill(const Color &c)
     {
-        for (int y = 0; y < _texture->getHeight(); y++)
-        {
-            for (int x = 0; x < _texture->getWidth(); x++)
-            {
-                _texture->set(x, y, c);
-            }
-        }
+        this->_texture->blank(c);
     }
 
 private:
