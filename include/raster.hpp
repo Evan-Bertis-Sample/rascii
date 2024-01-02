@@ -1,6 +1,7 @@
 #ifndef __RASTER_H__
 #define __RASTER_H__
 
+// TODO: vocab mixup -- change rasterizer to display
 // Header file for all things related to rasterization
 // Rendering, rasterization, etc.
 

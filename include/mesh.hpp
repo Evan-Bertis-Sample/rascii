@@ -4,6 +4,13 @@
 // Header file for all things related to meshes
 // MeshVertex, Triangles, Mesh, and MeshImporters
 
+// notes for development:
+// - possibly implement material system
+// - meshes ought to only contain their triangles
+// - for rendering purposes, we need more information than just the triangles, like materials, orientation, placement in object hierarchy, etc.
+// - I ought to implement some MeshObject class that contains a mesh and all of the information needed for rendering
+// - perhaps that meshrenderer can map a set of traingles to a material, and then render that material
+
 // Dependencies
 #include <string>
 #include <sstream>
