@@ -76,7 +76,7 @@ struct Vec
     }
 
     /// @brief Normalizes this vector
-    void normalize()
+    void normalizeSelf()
     {
         *this /= this->length();
     }
