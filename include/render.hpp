@@ -17,27 +17,6 @@
 #include "matrix.hpp"
 #include "mesh.hpp"
 
-/// @brief An interface that all renderers must implement
-/// @details A renderer is responsible for taking a bunch of meshes and rendering it into a texture
-class IRenderer {
-public:
-    /// @brief Default constructor
-    /// @details Initializes the renderer to the default values
-    IRenderer() {}
 
-    /// @brief Renders the given meshes to the texture
-    /// @details This is the main function of the renderer
-    /// @param meshes The meshes to render
-    /// @param tex The texture to render to
-    virtual void render(const std::vector<Mesh>& meshes, Texture& tex) = 0;
-
-    /// @brief Prepares the renderer for rendering
-    /// @details This function is called before rendering
-    virtual void prepare() = 0;
-
-    /// @brief Cleanup output
-    /// @details This function is called after rendering
-    virtual void cleanup() = 0;
-};
 
 #endif // __RENDER_H__
