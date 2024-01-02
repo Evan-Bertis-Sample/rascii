@@ -21,6 +21,193 @@ struct Vec
     /// @details Initializes the vector to the given values
     Vec(float x, float y, float z, float w = 1.0f) : x(x), y(y), z(z), w(w) {}
 
+    /// @brief Copy constructor
+    /// @details Initializes the vector to the given vector
+    Vec(const Vec& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
+
+    /// @brief Assignment operator
+    /// @details Assigns the vector to the given vector
+    Vec& operator=(const Vec& v)
+    {
+        this->x = v.x;
+        this->y = v.y;
+        this->z = v.z;
+        this->w = v.w;
+        return *this;
+    }
+
+    /// @brief Addition operator
+    /// @details Adds the given vector to this vector
+    Vec operator+(const Vec& v) const
+    {
+        return Vec(this->x + v.x, this->y + v.y, this->z + v.z, this->w + v.w);
+    }
+
+    /// @brief Subtraction operator
+    /// @details Subtracts the given vector from this vector
+    Vec operator-(const Vec& v) const
+    {
+        return Vec(this->x - v.x, this->y - v.y, this->z - v.z, this->w - v.w);
+    }
+
+    /// @brief Multiplication operator
+    /// @details Multiplies this vector by the given scalar
+    Vec operator*(float scalar) const
+    {
+        return Vec(this->x * scalar, this->y * scalar, this->z * scalar, this->w * scalar);
+    }
+
+    /// @brief Multiplication operator
+    /// @details Multiplies this vector by the given vector element-wise
+    Vec operator*(Vec v) const
+    {
+        return Vec(this->x * v.x, this->y * v.y, this->z * v.z, this->w * v.w);
+    }
+
+    /// @brief Division operator
+    /// @details Divides this vector by the given scalar
+    Vec operator/(float scalar) const
+    {
+        return Vec(this->x / scalar, this->y / scalar, this->z / scalar, this->w / scalar);
+    }
+
+    /// @brief Division operator
+    /// @details Divides this vector by the given vector element-wise
+    Vec operator/(Vec v) const
+    {
+        return Vec(this->x / v.x, this->y / v.y, this->z / v.z, this->w / v.w);
+    }
+
+    /// @brief Addition assignment operator
+    /// @details Adds the given vector to this vector
+    Vec& operator+=(const Vec& v)
+    {
+        this->x += v.x;
+        this->y += v.y;
+        this->z += v.z;
+        this->w += v.w;
+        return *this;
+    }
+
+    /// @brief Subtraction assignment operator
+    /// @details Subtracts the given vector from this vector
+    Vec& operator-=(const Vec& v)
+    {
+        this->x -= v.x;
+        this->y -= v.y;
+        this->z -= v.z;
+        this->w -= v.w;
+        return *this;
+    }
+
+    /// @brief Multiplication assignment operator
+    /// @details Multiplies this vector by the given scalar
+    Vec& operator*=(float scalar)
+    {
+        this->x *= scalar;
+        this->y *= scalar;
+        this->z *= scalar;
+        this->w *= scalar;
+        return *this;
+    }
+
+    /// @brief Multiplication assignment operator
+    /// @details Multiplies this vector by the given vector element-wise
+    Vec& operator*=(Vec v)
+    {
+        this->x *= v.x;
+        this->y *= v.y;
+        this->z *= v.z;
+        this->w *= v.w;
+        return *this;
+    }
+
+    /// @brief Division assignment operator
+    /// @details Divides this vector by the given scalar
+    Vec& operator/=(float scalar)
+    {
+        this->x /= scalar;
+        this->y /= scalar;
+        this->z /= scalar;
+        this->w /= scalar;
+        return *this;
+    }
+
+    /// @brief Division assignment operator
+    /// @details Divides this vector by the given vector element-wise
+    Vec& operator/=(Vec v)
+    {
+        this->x /= v.x;
+        this->y /= v.y;
+        this->z /= v.z;
+        this->w /= v.w;
+        return *this;
+    }
+
+
+    /// @brief Equality operator
+    /// @details Checks if this vector is equal to the given vector
+    bool operator==(const Vec& v) const
+    {
+        return this->x == v.x && this->y == v.y && this->z == v.z && this->w == v.w;
+    }
+
+    /// @brief Inequality operator
+    /// @details Checks if this vector is not equal to the given vector
+    bool operator!=(const Vec& v) const
+    {
+        return !(*this == v);
+    }
+
+    /// @brief Negation operator
+    /// @details Negates this vector
+    Vec operator-() const
+    {
+        return Vec(-this->x, -this->y, -this->z, -this->w);
+    }
+
+    /// @brief Returns the length of this vector
+    float length() const
+    {
+        return sqrt(this->x * this->x + this->y * this->y + this->z * this->z + this->w * this->w);
+    }
+
+    /// @brief Returns the squared length of this vector
+    float lengthSquared() const
+    {
+        return this->x * this->x + this->y * this->y + this->z * this->z + this->w * this->w;
+    }
+
+    /// @brief Returns the dot product of this vector and the given vector
+    float dot(const Vec& v) const
+    {
+        return this->x * v.x + this->y * v.y + this->z * v.z + this->w * v.w;
+    }
+
+    /// @brief Returns the cross product of this vector and the given vector
+    Vec cross(const Vec& v) const
+    {
+        return Vec(
+            this->y * v.z - this->z * v.y,
+            this->z * v.x - this->x * v.z,
+            this->x * v.y - this->y * v.x,
+            0.0f
+        );
+    }
+
+    /// @brief Returns the normalized version of this vector
+    Vec normalized() const
+    {
+        return *this / this->length();
+    }
+
+    /// @brief Normalizes this vector
+    void normalize()
+    {
+        *this /= this->length();
+    }
+
+    /// @brief Returns a string representation of this vector
     std::string toString() const
     {
         std::stringstream ss;
