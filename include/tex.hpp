@@ -8,6 +8,7 @@
 #include <string>
 #include <sstream>
 #include <memory>
+#include <cstring>
 #include "vec.hpp"
 
 // Forward declarations
@@ -216,6 +217,16 @@ public:
     void set(int x, int y, const Color &c)
     {
         _pixels[y * _width + x] = c;
+    }
+
+    /// @brief Blanks the texture
+    /// @details Blanks the texture
+    void blank(const Color &c = Color())
+    {
+        // Set the memory to the color
+        // Colors are the same size as ints (4 bytes)
+        int colorAsInt = *((int *)&c);
+        memset(_pixels, colorAsInt, _width * _height * sizeof(Color));
     }
 
     /// @brief Gets the width of the texture

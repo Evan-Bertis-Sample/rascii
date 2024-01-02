@@ -33,9 +33,7 @@ void App::run()
         this->_rasterizer.prepare();
         this->_rasterizer.render(*texPtr);
         this->_inputListener.listen();
-        // wait for a little bit
-        // this will limit the framerate, but keep the cpu usage lower
-        // the upper bound for framerate will be 144 fps
+        texPtr->blank(Color::greyscale(0.5f));
     }
 }
 
