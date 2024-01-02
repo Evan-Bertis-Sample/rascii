@@ -9,6 +9,7 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <stdlib.h>
 #include "tex.hpp"
 
 /// @brief An interface that all rasterizers must implement
@@ -26,6 +27,14 @@ public:
     /// @param tex The texture to render
     /// @param output The output to render to
     virtual void render(const Texture& tex) = 0;
+
+    /// @brief Prepares the rasterizer for rendering
+    /// @details This function is called before rendering
+    virtual void prepare() = 0;
+
+    /// @brief Cleanup output
+    /// @details This function is called after rendering
+    virtual void cleanup() = 0;
 };
 
 /// @brief A rasterizer that renders to the terminal
@@ -33,25 +42,28 @@ public:
 /// @details The terminal must be large enough to fit the texture
 class AsciiRasterizer : public IRasterizer {
 public:
-    /// @brief Default constructor
-    /// @details Initializes the rasterizer to the default values
-    AsciiRasterizer() : _width(80), _height(24) {
-        this->setOutput(std::cout);
-    }
-
     /// @brief Constructor
     /// @details Initializes the rasterizer to the given values
     /// @param width The width of the terminal
     /// @param height The height of the terminal
     AsciiRasterizer(int width, int height) : _width(width), _height(height) {
-        this->setOutput(std::cout);
+        // malloc the output buffer
+        int bufferSize = this->getBufferSize();
+        this->_outputBuffer = (char*)malloc(sizeof(char) * bufferSize);
+        this->_outputBuffer[bufferSize - 1] = '\0';
+
+        // create the rewind string -- brings the cursor to the top left
+        sprintf(rewindStr, "\x1b[%dA", height+1);
+        // create the cleanup string -- clears the terminal
+        sprintf(cleanupStr, "\x1b[%dA\x1b[J", height+1);
     }
 
-    /// @brief Sets the ouptut stream
-    /// @details Sets the output stream to the given stream
-    /// @param out The output stream to set
-    void setOutput(std::ostream& out) {
-        this->out = &out;
+    /// @brief Prepares the rasterizer for rendering
+    /// @details This function is called before rendering
+    void prepare() {
+        // move the cursor to the top left
+        if (startedStream)
+            fwrite(rewindStr, sizeof(char), sizeof(rewindStr), stderr);
     }
 
     /// @brief Renders the given texture to the terminal
@@ -59,6 +71,7 @@ public:
     /// @param tex The texture to render
     void render(const Texture& tex) {
         // get the width and height of the texture
+        startedStream = true;
         int texWidth = tex.getWidth();
         int texHeight = tex.getHeight();
 
@@ -67,21 +80,37 @@ public:
         int renderWidth = std::min(_width, texWidth);
         int renderHeight = std::min(_height, texHeight);
 
-        std::stringstream ss;
-        
         // loop through each pixel in the render
         for (int y = 0; y < renderHeight; y++) {
             for (int x = 0; x < renderWidth; x++) {
                 float luminance = tex.get(x, y).getLuminance();
                 // std::cout << "luminance: " << luminance << std::endl;
                 char c = this->luminanceToAscii(luminance);
-                ss << c;
+                int index = y * _width + x + y;
+                this->_outputBuffer[index] = c;
             }
-            // ouptput a newline
-            ss << "\n";
+            // add a newline
+            this->_outputBuffer[y * _width + y + renderWidth] = '\n';
         }
 
-        std::cout << ss.str();
+        // write the buffer to the output
+        fwrite(this->_outputBuffer, sizeof(char), this->getBufferSize(), stderr);
+    }
+
+    /// @brief Cleanup output
+    /// @details This function is called after rendering
+    void cleanup() {
+        // print cleanup string
+        if (startedStream)
+            fwrite(cleanupStr, sizeof(char), sizeof(cleanupStr), stderr);
+    }
+
+    inline int getBufferSize() const {
+        return this->_width * this->_height + this->_height + 1;
+    }
+
+    ~AsciiRasterizer() {
+        free((void*)this->_outputBuffer);
     }
 
 private:
@@ -89,8 +118,11 @@ private:
     const int _width;
     const int _height;
 
-    // ouptut channel
-    std::ostream* out;
+    char* _outputBuffer;
+    char rewindStr[20];
+    char cleanupStr[20];
+
+    bool startedStream = false;
 
     // used to convert luminance to ascii characters
     const char* _luminanceTable = " .:-=+*#%@";

@@ -183,7 +183,7 @@ WASDListener::WASDListener(InputListener &InputListener)
     char keys[4] = {'W', 'A', 'S', 'D'};
     for (char key : keys)
     {
-        std::cout << "WASDListener: Adding callback for " << key << std::endl;
+        // std::cout << "WASDListener: Adding callback for " << key << std::endl;
         std::function<void()> onPress = std::bind(&WASDListener::OnPress, this, key);
         std::function<void()> onRelease = std::bind(&WASDListener::OnRelease, this, key);
         PressCallback callback(

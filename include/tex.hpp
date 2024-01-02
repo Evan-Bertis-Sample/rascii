@@ -7,6 +7,7 @@
 // Dependencies
 #include <string>
 #include <sstream>
+#include <memory>
 #include "vec.hpp"
 
 // Forward declarations
