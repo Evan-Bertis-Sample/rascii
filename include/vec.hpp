@@ -28,7 +28,59 @@ struct Vec
     Vec(const Vec &v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
 #pragma endregion
 
+#pragma region Static Vec Methods
+    // Direction Functions
+
+    static Vec zero()
+    {
+        return Vec(0, 0, 0, 0);
+    }
+
+    static Vec one()
+    {
+        return Vec(1, 1, 1, 1);
+    }
+
+    static Vec up()
+    {
+        return Vec(0, 1, 0, 0);
+    }
+
+    static Vec down()
+    {
+        return Vec(0, -1, 0, 0);
+    }
+
+    static Vec left()
+    {
+        return Vec(-1, 0, 0, 0);
+    }
+
+    static Vec right()
+    {
+        return Vec(1, 0, 0, 0);
+    }
+
+    static Vec forward()
+    {
+        return Vec(0, 0, 1, 0);
+    }
+
+    static Vec backward()
+    {
+        return Vec(0, 0, -1, 0);
+    }
+
+#pragma endregion
+
 #pragma region Vec Methods
+    /// @brief Converts a sequence of floats into a vector
+    /// @details Converts a sequence of floats into a vector -- the default values are 0
+    static Vec toVec(float x = 0, float y = 0, float z = 0, float w = 0)
+    {
+        return Vec(x, y, z, w);
+    }
+
     /// @brief Returns the element at the given index
     /// @details Returns the element at the given index
     /// @param index The index of the element
@@ -79,6 +131,18 @@ struct Vec
     void normalizeSelf()
     {
         *this /= this->length();
+    }
+
+    /// @brief Returns a 2D vector with the x and y components of this vector (the other components are zero)
+    Vec xy() const
+    {
+        return Vec(this->x, this->y, 0, 0);
+    }
+
+    /// @brief Returns a 3D vector with the x, y, and z components of this vector (the other component is zero)
+    Vec xyz() const
+    {
+        return Vec(this->x, this->y, this->z, 0);
     }
 
     /// @brief Returns a string representation of this vector

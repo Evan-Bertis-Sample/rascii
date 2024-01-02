@@ -8,8 +8,8 @@
 #include "raster.hpp"
 #include "runtime_input.hpp"
 
-const int OUTPUT_WIDTH = 100;
-const int OUTPUT_HEIGHT = 64;
+const int OUTPUT_WIDTH = 128;
+const int OUTPUT_HEIGHT = 32;
 
 Controls App::controls = Controls();
 
