@@ -7,8 +7,8 @@
 #include "raster.hpp"
 #include "runtime_input.hpp"
 
-const int OUTPUT_WIDTH = 32;
-const int OUTPUT_HEIGHT = 16;
+const int OUTPUT_WIDTH = 100;
+const int OUTPUT_HEIGHT = 64;
 
 App::App() : _rasterizer(OUTPUT_WIDTH, OUTPUT_HEIGHT), _inputListener()
 {
@@ -19,6 +19,7 @@ void App::run()
 {
     std::shared_ptr<Texture> texPtr = std::make_shared<Texture>(OUTPUT_WIDTH, OUTPUT_HEIGHT, Color::greyscale(0.5f));
     TextureDrawer drawer(texPtr);
+    
     drawer.drawLine(Vec(0, 0, 0), Vec(OUTPUT_WIDTH, OUTPUT_HEIGHT, 0), Color::greyscale(1.0f));
     drawer.drawCircle(Vec(OUTPUT_WIDTH / 2, OUTPUT_HEIGHT / 2, 0), 10, Color::greyscale(1.0f));
 
@@ -35,7 +36,6 @@ void App::run()
         // wait for a little bit
         // this will limit the framerate, but keep the cpu usage lower
         // the upper bound for framerate will be 144 fps
-        Sleep(1000 / 144);
     }
 }
 

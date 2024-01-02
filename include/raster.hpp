@@ -61,9 +61,18 @@ public:
     /// @brief Prepares the rasterizer for rendering
     /// @details This function is called before rendering
     void prepare() {
-        // move the cursor to the top left
         if (startedStream)
+        {
+            // move the cursor to the top left
             fwrite(rewindStr, sizeof(char), sizeof(rewindStr), stderr);
+        }
+        else
+        {
+            // clear the terminal
+            fwrite(cleanupStr, sizeof(char), sizeof(cleanupStr), stderr);
+            // hide the cursor
+            this->hideCursor(true);
+        }
     }
 
     /// @brief Renders the given texture to the terminal
@@ -102,7 +111,10 @@ public:
     void cleanup() {
         // print cleanup string
         if (startedStream)
+        {
             fwrite(cleanupStr, sizeof(char), sizeof(cleanupStr), stderr);
+        }
+        this->hideCursor(false);
     }
 
     inline int getBufferSize() const {
@@ -138,6 +150,20 @@ private:
 
         // return the character at the index
         return _luminanceTable[index];
+    }
+
+    /// @brief Hides/Shows the cursor
+    /// @details This function hides or shows the cursor
+    /// @param hide Whether or not to hide the cursor
+    void hideCursor(bool hide) {
+        if (hide) {
+            // hide the cursor
+            fwrite("\x1b[?25l", sizeof(char), 6, stderr);
+        }
+        else {
+            // show the cursor
+            fwrite("\x1b[?25h", sizeof(char), 6, stderr);
+        }
     }
 };
 
