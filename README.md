@@ -1,4 +1,4 @@
-#rascii
+# rascii
 
 Rascii is a dependency-free, terminal-based 3D renderer written in C++ built for educational purposes. Because there are no extenral libraries (other than the C++ standard library and a little bit of the windows API), this project is completely terminal-based. **Yes, that means the entire output is in the terminal.**
 
