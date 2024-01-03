@@ -216,6 +216,10 @@ public:
     /// @details Sets the color at the given coordinates
     void set(int x, int y, const Color &c)
     {
+        if (x < 0 || x >= _width || y < 0 || y >= _height)
+        {
+            return;
+        }
         _pixels[y * _width + x] = c;
     }
 

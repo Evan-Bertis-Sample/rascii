@@ -58,7 +58,7 @@ struct Matrix
     /// @param row The row of the element
     /// @param col The column of the element
     /// @param val The value to set the element to
-    float set(int row, int col, float val)
+    void set(int row, int col, float val)
     {
         this->elements[row * 4 + col] = val;
     }

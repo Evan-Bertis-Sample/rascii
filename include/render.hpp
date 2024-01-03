@@ -54,6 +54,9 @@ struct RenderSettings {
     float fov;
     float near;
     float far;
+
+    RenderSettings() : width(0), height(0), fov(0.0f), near(0.0f), far(0.0f) {}
+    RenderSettings(int width, int height, float fov, float near, float far) : width(width), height(height), fov(fov), near(near), far(far) {}
 };
 
 /// @brief The RASCII renderer
@@ -73,12 +76,16 @@ public:
         this->_outputPtr = std::make_shared<Texture>(settings.width, settings.height);
         this->_textureDrawer = TextureDrawer(this->_outputPtr);
 
-        // calculate the 
+        // calculate the matrices
+        this->generateMatrices();
     }
 
     /// @brief Renders the given scene graph to the output
     void render(const SceneGraph& sceneGraph)
     {
+        // fill the texture with black
+        this->_textureDrawer.fill(Color::greyscale(0.0f));
+
         for (auto &node : sceneGraph)
         {
             Transform transform = node->transform;
@@ -90,7 +97,12 @@ public:
             for (auto &triangle : transformedMesh)
             {
                 // convert the triangle from world space to screen space
+                Vec v1 = this->worldToTexture(triangle.v1.position);
+                Vec v2 = this->worldToTexture(triangle.v2.position);
+                Vec v3 = this->worldToTexture(triangle.v3.position);
 
+                // draw the triangle
+                this->_textureDrawer.drawTriangle(v1, v2, v3, Color::greyscale(1.0f));
             }
         }
     }
@@ -137,8 +149,10 @@ private:
     /// @brief Converts the given screen position to a texture position
     /// @param screenPos The screen position
     /// @return The texture position
-    Vec screenToTexture(const Vec& screenPos)
+    Vec screenToTexture(Vec screenPos)
     {
+        // ensure that the w component is 1
+        screenPos.w = 1.0f;
         return this->_viewMatrix * screenPos;
     }
 
@@ -146,7 +160,7 @@ private:
     /// @details More optimized than two separate calls to worldToScreen and screenToTexture
     /// @param worldPos The world position
     /// @return The texture position
-    Vec worldToTexture(const Vec& worldPos)
+    Vec worldToTexture(Vec worldPos)
     {
         return this->_pvMatrix * worldPos;
     }
@@ -154,6 +168,31 @@ private:
     void generateMatrices()
     {
         // generate the projection matrix
+        float aspectRatio = (float)this->_settings.width / (float)this->_settings.height;
+        float fov = this->_settings.fov;
+        float near = this->_settings.near;
+        float far = this->_settings.far;
+        float fovRad = 1.0f / tanf(fov * 0.5f / 180.0f * 3.14159f);
+        float range = far - near;
+
+        this->_projectionMatrix = Matrix();
+        this->_projectionMatrix.set(0, 0, aspectRatio * fovRad);
+        this->_projectionMatrix.set(1, 1, fovRad);
+        this->_projectionMatrix.set(2, 2, -far / range);
+        this->_projectionMatrix.set(3, 2, (-far * near) / range);
+        this->_projectionMatrix.set(2, 3, -1.0f);
+
+        // generate the view matrix
+        // the view matrix converts the normalized screen position to a texture position
+        // ie (-1,-1) to (1,1) to (0,0) to (width, height)
+        this->_viewMatrix = Matrix();
+        this->_viewMatrix.set(0, 0, this->_settings.width / 2.0f);
+        this->_viewMatrix.set(1, 1, this->_settings.height / 2.0f);
+        this->_viewMatrix.set(0, 3, this->_settings.width / 2.0f);
+        this->_viewMatrix.set(1, 3, this->_settings.height / 2.0f);
+
+        // generate the pv matrix
+        this->_pvMatrix = this->_projectionMatrix * this->_viewMatrix;
     }
 };
 
