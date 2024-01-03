@@ -13,7 +13,7 @@ const int OUTPUT_HEIGHT = 32;
 
 Controls App::controls = Controls();
 
-App::App() : _Display(OUTPUT_WIDTH, OUTPUT_HEIGHT)
+App::App() : _display(OUTPUT_WIDTH, OUTPUT_HEIGHT)
 {
     std::cout << "Initializing RASCII\n"; 
 }
@@ -40,8 +40,8 @@ void App::run()
     // update loop
     while (true)
     {
-        this->_Display.prepare();
-        this->_Display.draw(*texPtr);
+        this->_display.prepare();
+        this->_display.draw(*texPtr);
         this->_inputListener->listen();
     }
 }
@@ -49,12 +49,12 @@ void App::run()
 void App::onExit(int exitCode)
 {
     // cleanup
-    this->_Display.cleanup();
+    this->_display.cleanup();
     exit(exitCode);
 }
 
 App::~App()
 {
     // cleanup
-    this->_Display.cleanup();
+    this->_display.cleanup();
 }

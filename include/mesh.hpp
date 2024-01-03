@@ -157,6 +157,33 @@ public:
     int getVertexCount() const {
         return this->triangles.size() * 3;
     }
+
+    Mesh transform(const Matrix& transformationMatrix) const {
+        Mesh transformedMesh = Mesh();
+        transformedMesh.triangles = std::vector<Triangle>(this->triangles.size());
+        for (int i = 0; i < this->triangles.size(); i++) {
+            Triangle triangle = this->triangles[i];
+            transformedMesh.triangles[i] = Triangle(
+                MeshVertex(transformationMatrix * triangle.v1.position, transformationMatrix * triangle.v1.normal),
+                MeshVertex(transformationMatrix * triangle.v2.position, transformationMatrix * triangle.v2.normal),
+                MeshVertex(transformationMatrix * triangle.v3.position, transformationMatrix * triangle.v3.normal)
+            );
+        }
+        return transformedMesh;
+    }
+
+    // iterator
+    typedef std::vector<Triangle>::iterator iterator;
+    typedef std::vector<Triangle>::const_iterator const_iterator;
+
+    iterator begin() {
+        return this->triangles.begin();
+    }
+
+    iterator end() {
+        return this->triangles.end();
+    }
+    
 };
 
 /// @brief An interface that all mesh importers must implement

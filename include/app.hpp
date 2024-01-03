@@ -36,7 +36,7 @@ public:
     void onExit(int exitCode);
 private:
     std::shared_ptr<InputListener> _inputListener;
-    AsciiDisplay _Display;
+    AsciiDisplay _display;
 };
 
 #endif // __APP_H__

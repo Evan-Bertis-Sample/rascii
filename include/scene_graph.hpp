@@ -206,12 +206,12 @@ public:
     }
 
     // Iterator
-    TransformNode::TransformNodeIterator begin()
+    TransformNode::TransformNodeIterator begin() const
     {
         return this->root->begin();
     }
 
-    TransformNode::TransformNodeIterator end()
+    TransformNode::TransformNodeIterator end() const
     {
         return this->root->end();
     }
