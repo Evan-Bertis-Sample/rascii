@@ -81,6 +81,11 @@ struct Vec
         return Vec(x, y, z, w);
     }
 
+    static Vec interpolate(Vec v1, Vec v2, float t)
+    {
+        return v1 + (v2 - v1) * t;
+    }
+
     /// @brief Returns the element at the given index
     /// @details Returns the element at the given index
     /// @param index The index of the element

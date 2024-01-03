@@ -29,7 +29,13 @@ void App::run()
     TextureDrawer drawer(texPtr);
     
     drawer.drawLine(Vec(0, 0, 0), Vec(OUTPUT_WIDTH, OUTPUT_HEIGHT, 0), Color::greyscale(1.0f));
-    drawer.drawCircle(Vec(OUTPUT_WIDTH / 2, OUTPUT_HEIGHT / 2, 0), 10, Color::greyscale(1.0f));
+    drawer.fillCircle(Vec(OUTPUT_WIDTH / 2, OUTPUT_HEIGHT / 2, 0), 10, Color::greyscale(1.0f));
+    // drawer.fillTriangle(Vec(0, 0, 0), Vec(OUTPUT_WIDTH, 0, 0), Vec(OUTPUT_WIDTH / 2, OUTPUT_HEIGHT, 0), Color::greyscale(1.0f));
+    // draw a more scalene, obtuse triangle
+    drawer.fillTriangle(Vec(5, 5, 0), 
+                        Vec(10, 25, 0), 
+                        Vec(25, 10, 0), 
+                        Color::greyscale(0));
 
     // update loop
     while (true)

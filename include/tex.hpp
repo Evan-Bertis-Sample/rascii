@@ -354,6 +354,57 @@ public:
         drawLine(p3, p1, c);
     }
 
+    /// @brief Draws a filled triangle on the texture
+    /// @details Draws a filled triangle on the texture
+    /// @param p1 The first point
+    /// @param p2 The second point
+    /// @param p3 The third point
+    /// @param c The color of the triangle
+    void fillTriangle(const Vec &p1, const Vec &p2, const Vec &p3, const Color &c)
+    {
+        // order the points by y
+        Vec orderedPoints[3] = {p1, p2, p3};
+        // bubble sort -- good enough for 3 elements
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 2 - i; j++)
+            {
+                if (orderedPoints[j].y > orderedPoints[j + 1].y)
+                {
+                    Vec temp = orderedPoints[j];
+                    orderedPoints[j] = orderedPoints[j + 1];
+                    orderedPoints[j + 1] = temp;
+                }
+            }
+        }
+
+        // now draw the horizontal lines that comprise this triangle, from top to bottom
+        Vec top = orderedPoints[0];
+        Vec middle = orderedPoints[1];
+        Vec bottom = orderedPoints[2];
+
+        // calculate the slopes of the lines
+        float topToMiddleSlope = (middle.x - top.x) / (middle.y - top.y);
+        float topToBottomSlope = (bottom.x - top.x) / (bottom.y - top.y);
+        float middleToBottomSlope = (bottom.x - middle.x) / (bottom.y - middle.y);
+
+        // draw the top half of the triangle
+        for (int y = top.y; y < middle.y; y++)
+        {
+            int x1 = top.x + (y - top.y) * topToMiddleSlope;
+            int x2 = top.x + (y - top.y) * topToBottomSlope;
+            drawLine(x1, y, x2, y, c);
+        }
+
+        // draw the bottom half of the triangle
+        for (int y = middle.y; y < bottom.y; y++)
+        {
+            int x1 = middle.x + (y - middle.y) * middleToBottomSlope;
+            int x2 = top.x + (y - top.y) * topToBottomSlope;
+            drawLine(x1, y, x2, y, c);
+        }
+    }
+
     /// @brief Draws a circle outline on the Texture
     /// @details Draws a circle outline on the Texture
     /// @param x The x coordinate of the center of the circle
@@ -406,6 +457,64 @@ public:
     void drawCircle(const Vec &p, float r, const Color &c)
     {
         drawCircle(p.x, p.y, r, c);
+    }
+
+    /// @brief Draws a filled circle on the Texture
+    /// @details Draws a filled circle on the Texture
+    /// @param x The x coordinate of the center of the circle
+    /// @param y The y coordinate of the center of the circle
+    /// @param r The radius of the circle
+    /// @param c The color of the circle
+    void fillCircle(int x, int y, float r, const Color &c)
+    {
+        // Bresenham's circle algorithm
+        // https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
+        int f = 1 - r;
+        int ddF_x = 1;
+        int ddF_y = -2 * r;
+        int cx = 0;
+        int cy = r;
+
+        // draw the horizontal lines
+        for (int i = y - r; i <= y + r; i++)
+        {
+            _texture->set(x, i, c);
+        }
+
+        while (cx < cy)
+        {
+            if (f >= 0)
+            {
+                cy--;
+                ddF_y += 2;
+                f += ddF_y;
+            }
+            cx++;
+            ddF_x += 2;
+            f += ddF_x;
+
+            // draw the horizontal lines
+            for (int i = y - cy; i <= y + cy; i++)
+            {
+                _texture->set(x + cx, i, c);
+                _texture->set(x - cx, i, c);
+            }
+            for (int i = y - cx; i <= y + cx; i++)
+            {
+                _texture->set(x + cy, i, c);
+                _texture->set(x - cy, i, c);
+            }
+        }
+    }
+
+    /// @brief Draws a filled circle on the Texture
+    /// @details Draws a filled circle on the Texture
+    /// @param p The center of the circle
+    /// @param r The radius of the circle
+    /// @param c The color of the circle
+    void fillCircle(const Vec &p, float r, const Color &c)
+    {
+        fillCircle(p.x, p.y, r, c);
     }
 
     /// @brief Fills a texture with a color
