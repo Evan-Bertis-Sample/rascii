@@ -14,42 +14,7 @@
 #include "vec.hpp"
 #include "matrix.hpp"
 #include "quaternion.hpp"
-
-/// @brief A component is a piece of data that is attached to an entity
-/// @details Every entity has a transform
-class Transform
-{
-public:
-    Vec position;
-    Quaternion rotation;
-    Vec scale;
-
-    Transform() : position(Vec()), rotation(Quaternion()), scale(Vec(1, 1, 1)) {}
-    Transform(Vec position, Quaternion rotation, Vec scale) : position(position), rotation(rotation), scale(scale) {}
-    Transform(const Transform &t) : position(t.position), rotation(t.rotation), scale(t.scale) {}
-
-    /// @brief Gets the transformation matrix of the transform
-    /// @details Returns the transformation matrix of the transform
-    Matrix toTransformationMatrix() const
-    {
-        Matrix transformationMatrix = Matrix();
-        
-        // Set the translation information
-        transformationMatrix.set(0, 3, this->position.x);
-        transformationMatrix.set(1, 3, this->position.y);
-        transformationMatrix.set(2, 3, this->position.z);
-
-        // Set the scale information
-        transformationMatrix.set(0, 0, this->scale.x);
-        transformationMatrix.set(1, 1, this->scale.y);
-        transformationMatrix.set(2, 2, this->scale.z);
-
-        Matrix rotationMatrix = this->rotation.toRotationMatrix();
-        transformationMatrix = transformationMatrix * rotationMatrix;
-
-        return transformationMatrix;
-    }
-};
+#include "scene_graph.hpp"
 
 /// @brief A component is a piece of data that is attached to an entity
 class Component

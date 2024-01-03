@@ -88,11 +88,41 @@ struct Quaternion
 #pragma endregion
 
 #pragma region Quaternion Methods
-    /// @brief Constructs a rotation matrix from the quaternion
+    /// @brief Constructs a 4x4 rotation matrix from the quaternion
     /// @return A 4x4 Rotation matrix
     Matrix toRotationMatrix() const
     {
+        // starts off with the identity matrix
+        Matrix rotationMatrix = Matrix();
+
+        // precompute the values
+        float x2 = this->x * this->x;
+        float y2 = this->y * this->y;
+        float z2 = this->z * this->z;
+        float xy = this->x * this->y;
+        float xz = this->x * this->z;
+        float yz = this->y * this->z;
+        float wx = this->w * this->x;
+        float wy = this->w * this->y;
+        float wz = this->w * this->z;
+
+        // set the values
+        rotationMatrix.set(0, 0, 1 - 2 * (y2 + z2));
+        rotationMatrix.set(0, 1, 2 * (xy - wz));
+        rotationMatrix.set(0, 2, 2 * (xz + wy));
+
+        rotationMatrix.set(1, 0, 2 * (xy + wz));
+        rotationMatrix.set(1, 1, 1 - 2 * (x2 + z2));
+        rotationMatrix.set(1, 2, 2 * (yz - wx));
+
+        rotationMatrix.set(2, 0, 2 * (xz - wy));
+        rotationMatrix.set(2, 1, 2 * (yz + wx));
+        rotationMatrix.set(2, 2, 1 - 2 * (x2 + y2));
+
+        return rotationMatrix;
     }
+
+    // TODO: Implement slerp, inverse, and conjugate, and overloads
 #pragma endregion
 };
 
