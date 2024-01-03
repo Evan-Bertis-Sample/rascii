@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <functional>
-#include "raster.hpp"
+#include "display.hpp"
 #include "runtime_input.hpp"
 #include "control.hpp"
 
@@ -36,7 +36,7 @@ public:
     void onExit(int exitCode);
 private:
     std::shared_ptr<InputListener> _inputListener;
-    AsciiRasterizer _rasterizer;
+    AsciiDisplay _Display;
 };
 
 #endif // __APP_H__

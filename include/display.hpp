@@ -1,9 +1,7 @@
-#ifndef __RASTER_H__
-#define __RASTER_H__
+#ifndef __DISPLAY_H__
+#define __DISPLAY_H__
 
-// TODO: vocab mixup -- change rasterizer to display
-// Header file for all things related to rasterization
-// Rendering, rasterization, etc.
+// Header file for all things related to the act of displaying
 
 // Dependencies
 #include <iostream>
@@ -13,23 +11,23 @@
 #include <stdlib.h>
 #include "tex.hpp"
 
-/// @brief An interface that all rasterizers must implement
-/// @details A rasterizer is responsible for taking a texture and rendering it into some output
+/// @brief An interface that all Displays must implement
+/// @details A Display is responsible for taking a texture and rendering it into some output
 /// @details The output could be a terminal, a file, a window, etc.
 /// @note This is an interface, and should not be instantiated
-class IRasterizer {
+class IDisplay {
 public:
     /// @brief Default constructor
-    /// @details Initializes the rasterizer to the default values
-    IRasterizer() {}
+    /// @details Initializes the Display to the default values
+    IDisplay() {}
 
     /// @brief Renders the given texture to the output
-    /// @details This is the main function of the rasterizer
+    /// @details This is the main function of the Display
     /// @param tex The texture to render
     /// @param output The output to render to
-    virtual void render(const Texture& tex) = 0;
+    virtual void draw(const Texture& tex) = 0;
 
-    /// @brief Prepares the rasterizer for rendering
+    /// @brief Prepares the Display for rendering
     /// @details This function is called before rendering
     virtual void prepare() = 0;
 
@@ -38,16 +36,16 @@ public:
     virtual void cleanup() = 0;
 };
 
-/// @brief A rasterizer that renders to the terminal
-/// @details This rasterizer renders the texture to the terminal
+/// @brief A Display that renders to the terminal
+/// @details This Display renders the texture to the terminal
 /// @details The terminal must be large enough to fit the texture
-class AsciiRasterizer : public IRasterizer {
+class AsciiDisplay : public IDisplay {
 public:
     /// @brief Constructor
-    /// @details Initializes the rasterizer to the given values
+    /// @details Initializes the Display to the given values
     /// @param width The width of the terminal
     /// @param height The height of the terminal
-    AsciiRasterizer(int width, int height) : _width(width), _height(height) {
+    AsciiDisplay(int width, int height) : _width(width), _height(height) {
         // malloc the output buffer
         int bufferSize = this->getBufferSize();
         this->_outputBuffer = (char*)malloc(sizeof(char) * bufferSize);
@@ -59,7 +57,7 @@ public:
         sprintf(cleanupStr, "\x1b[%dA\x1b[J", height+1);
     }
 
-    /// @brief Prepares the rasterizer for rendering
+    /// @brief Prepares the Display for rendering
     /// @details This function is called before rendering
     void prepare() {
         if (startedStream)
@@ -77,9 +75,9 @@ public:
     }
 
     /// @brief Renders the given texture to the terminal
-    /// @details This is the main function of the rasterizer
+    /// @details This is the main function of the Display
     /// @param tex The texture to render
-    void render(const Texture& tex) {
+    void draw(const Texture& tex) {
         // get the width and height of the texture
         startedStream = true;
         int texWidth = tex.getWidth();
@@ -122,7 +120,7 @@ public:
         return this->_width * this->_height + this->_height + 1;
     }
 
-    ~AsciiRasterizer() {
+    ~AsciiDisplay() {
         free((void*)this->_outputBuffer);
     }
 
@@ -168,4 +166,4 @@ private:
     }
 };
 
-#endif // __RASTER_H__
+#endif // __DISPLAY_H__
