@@ -113,7 +113,7 @@ public:
             // std::cout << node->toString() << std::endl;
 
             Transform transform = node->transform;
-            Matrix transformationMatrix = transform.toTransformationMatrix();
+            Matrix transformationMatrix = node->toTransformationMatrix();
 
             // transform the mesh
             Mesh transformedMesh = node->renderInfo.mesh->transform(transformationMatrix);

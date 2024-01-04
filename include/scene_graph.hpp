@@ -35,7 +35,6 @@ public:
     Matrix toTransformationMatrix() const
     {
         Matrix transformationMatrix = Matrix();
-
         // Set the translation information
         transformationMatrix.set(0, 3, this->position.x);
         transformationMatrix.set(1, 3, this->position.y);
@@ -47,6 +46,7 @@ public:
         transformationMatrix.set(2, 2, this->scale.z);
 
         Matrix rotationMatrix = this->rotation.toRotationMatrix();
+        // first rotate then translate
         transformationMatrix = transformationMatrix * rotationMatrix;
 
         return transformationMatrix;
@@ -67,6 +67,22 @@ public:
     void rotate(const Quaternion &q)
     {
         this->rotation = this->rotation * q;
+    }
+
+    /// @brief Scales the transform by the given vector
+    /// @details Scales the transform by the given vector
+    /// @param v The vector to scale the transform by
+    void scaleBy(const Vec &v)
+    {
+        this->scale = this->scale * v;
+    }
+
+    /// @brief Scales the transform by the given scalar
+    /// @details Scales the transform by the given scalar
+    /// @param s The scalar to scale the transform by
+    void scaleBy(float s)
+    {
+        this->scale = this->scale * s;
     }
 
 
