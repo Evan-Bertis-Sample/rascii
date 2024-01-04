@@ -140,7 +140,9 @@ public:
     /// @brief Copy constructor
     /// @details Initializes the mesh to the given mesh
     /// @param mesh The mesh to copy
-    Mesh(const Mesh& mesh) : triangles(mesh.triangles) {}
+    Mesh(const Mesh& mesh) : triangles() {
+        this->triangles = std::vector<Triangle>(mesh.triangles);
+    }
 
     /// @brief Returns a quad centered at the origin
     /// @details Returns a quad centered at the origin (if -x is to the left, +x is to the right, -y is down, +y is up, the quad visible)
@@ -162,6 +164,18 @@ public:
     }
 
     Mesh transform(const Matrix& transformationMatrix) const {
+        if (this->getTriangleCount() == 0) {
+            return Mesh();
+        }
+
+        // std::cout << "Transforming mesh with " << this->getTriangleCount() << " triangles" << std::endl;
+        if (this->getTriangleCount() > 10000 || this->getTriangleCount() < 0)
+        {
+            // std::cout << "WARNING: Transforming a mesh with " << this->getTriangleCount() << " triangles" << std::endl;
+            return Mesh();
+        }
+
+
         Mesh transformedMesh = Mesh();
         int triCount = this->getTriangleCount();
         if (triCount == 0) {
@@ -169,7 +183,6 @@ public:
         }
         transformedMesh.triangles = std::vector<Triangle>(triCount);
         for (int i = 0; i < triCount; i++) {
-            std::cout << "Transforming triangle " << i << std::endl;
             Triangle triangle = this->triangles[i];
             Triangle newTri = Triangle(
                 MeshVertex(transformationMatrix * triangle.v1.position, transformationMatrix * triangle.v1.normal),

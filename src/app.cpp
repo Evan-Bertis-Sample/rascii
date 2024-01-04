@@ -25,35 +25,51 @@ void App::init()
 
 void App::run()
 {
-    RenderSettings settings(OUTPUT_WIDTH, OUTPUT_HEIGHT, 90.0f, 0.1f, 100.0f);
+    RenderSettings settings(OUTPUT_WIDTH, OUTPUT_HEIGHT, 90.0f, 0.1f, 100.1f);
     std::cout << settings.toString() << "\n";
     RasciiRenderer renderer = RasciiRenderer(settings);
-    renderer.prepare();
 
     // create the scene graph
     SceneGraph sceneGraph = SceneGraph();
     Mesh mesh = Mesh::centeredQuad();
-    mesh = mesh.move(Vec(0.0f, 0.0f, 25.0f));
+    Mesh mesh2 = mesh.move(Vec(-5.0f, 0.0f, -50.0f));
+    mesh = mesh.move(Vec(5.0f, 0.0f, -25.0f));
 
     // create the transform node
-    std::shared_ptr<Mesh> meshPtr = std::make_shared<Mesh>(mesh);;
+    std::shared_ptr<Mesh> meshPtr = std::make_shared<Mesh>(mesh);
+    ;
     RenderInfo renderInfo = RenderInfo(meshPtr);
     std::shared_ptr<TransformNode> transformNode = std::make_shared<TransformNode>(Transform(), renderInfo);
     // add the transform node to the scene graph
     sceneGraph.addChild(transformNode);
 
+    // create the transform node
+    std::shared_ptr<Mesh> meshPtr2 = std::make_shared<Mesh>(mesh2);
+    ;
+    RenderInfo renderInfo2 = RenderInfo(meshPtr2);
+    std::shared_ptr<TransformNode> transformNode2 = std::make_shared<TransformNode>(Transform(), renderInfo2);
+    // add the transform node to the scene graph
+    sceneGraph.addChild(transformNode2);
+
     // std::cout << "Created scene graph\n";
-    // create the displayer
-    this->_inputListener->listen();
-    // render the scene graph
-    renderer.render(sceneGraph);
-    // draw the output
-    this->_display.draw(*renderer.getOutput());
+    Quaternion rotationQuaternion = Quaternion::fromAxisAngle(Vec(0.0f, 1.0f, 0.0f), 0.0001f);
 
     // update loop
-    // while (true)
-    // {
-    // }
+    while (true)
+    {
+        _display.prepare();
+        renderer.prepare();
+        // create the displayer
+        this->_inputListener->listen();
+        // render the scene graph
+        renderer.render(sceneGraph);
+
+        // draw the output
+        this->_display.draw(*renderer.getOutput());
+
+        // transform the root of the sceneGraph
+        transformNode->transform.rotate(rotationQuaternion);
+    }
 }
 
 void App::onExit(int exitCode)

@@ -101,17 +101,16 @@ public:
     {
         // fill the texture with black
         this->_textureDrawer.fill(Color::greyscale(0.0f));
-        std::cout << "Rendering scene graph\n";
         for (auto node : sceneGraph)
         {
-            // std::cout << "Rendering node" << std::endl;
-            // std::cout << node->toString() << std::endl;
-
-            if (node->renderInfo.mesh == nullptr)
+            if (node == nullptr || node->renderInfo.mesh == nullptr)
             {
-                std::cout << "Skipping node -- no mesh\n";
+                // std::cout << "Skipping node" << std::endl;
                 continue;
             }
+
+            // std::cout << "Rendering node" << std::endl;
+            // std::cout << node->toString() << std::endl;
 
             Transform transform = node->transform;
             Matrix transformationMatrix = transform.toTransformationMatrix();
@@ -121,7 +120,6 @@ public:
 
             for (auto &triangle : transformedMesh)
             {
-                // std::cout << "Rendering triangle\n";
                 // convert the triangle from world space to screen space
                 Vec v1 = this->worldToTexture(triangle.v1.position);
                 Vec v2 = this->worldToTexture(triangle.v2.position);
@@ -187,15 +185,13 @@ private:
     /// @return The texture position
     Vec worldToTexture(Vec worldPos)
     {
-        std::cout << "worldPos: " << worldPos.toString() << std::endl;
         // convert to screen space
         Vec screenPos = this->_projectionMatrix * worldPos;
-        screenPos.w = 1.0f;
-        std::cout << "screenPos: " << screenPos.toString() << std::endl;
+        screenPos = screenPos / screenPos.w;
 
         // convert to texture space
         Vec texturePos = this->_viewMatrix * screenPos;
-        std::cout << "texturePos: " << texturePos.toString() << std::endl;
+        texturePos = texturePos/texturePos.w;
 
         return texturePos;
     }
@@ -224,8 +220,8 @@ private:
         this->_projectionMatrix.set(2, 3, 1.0f);
         this->_projectionMatrix.set(3, 3, 0.0f);
 
-        std::cout << "Projection Matrix: " << std::endl;
-        std::cout << this->_projectionMatrix.toString() << std::endl;
+        // std::cout << "Projection Matrix: " << std::endl;
+        // std::cout << this->_projectionMatrix.toString() << std::endl;
 
         // generate the view matrix
         // the view matrix converts the normalized screen position to a texture position
@@ -236,14 +232,14 @@ private:
         this->_viewMatrix.set(0, 3, this->_settings.width / 2.0f);
         this->_viewMatrix.set(1, 3, this->_settings.height / 2.0f);
 
-        std::cout << "View Matrix: " << std::endl;
-        std::cout << this->_viewMatrix.toString() << std::endl;
+        // std::cout << "View Matrix: " << std::endl;
+        // std::cout << this->_viewMatrix.toString() << std::endl;
 
         // generate the pv matrix
         this->_pvMatrix = this->_projectionMatrix * this->_viewMatrix;
 
-        std::cout << "PV Matrix: " << std::endl;
-        std::cout << this->_pvMatrix.toString() << std::endl;
+        // std::cout << "PV Matrix: " << std::endl;
+        // std::cout << this->_pvMatrix.toString() << std::endl;
     }
 };
 

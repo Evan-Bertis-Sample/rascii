@@ -57,7 +57,7 @@ struct Matrix
         result.set(0, 3, v.x);
         result.set(1, 3, v.y);
         result.set(2, 3, v.z);
-        std::cout << result.toString() << std::endl;
+
         return result;
     }
 #pragma endregion

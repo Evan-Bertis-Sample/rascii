@@ -52,6 +52,24 @@ public:
         return transformationMatrix;
     }
 
+    // Movement functions
+    /// @brief Moves the transform by the given vector
+    /// @details Moves the transform by the given vector
+    /// @param v The vector to move the transform by
+    void move(const Vec &v)
+    {
+        this->position = this->position + v;
+    }
+
+    /// rotates the transform by the given quaternion
+    /// @details rotates the transform by the given quaternion
+    /// @param q The quaternion to rotate the transform by
+    void rotate(const Quaternion &q)
+    {
+        this->rotation = this->rotation * q;
+    }
+
+
     /// @brief Returns a string representation of this transform
     /// @details Returns a string representation of this transform
     std::string toString() const
@@ -87,7 +105,7 @@ public:
 
 /// @brief A node in the scene graph
 /// @details A node is an entity that has a parent and children
-class TransformNode
+class TransformNode : public std::enable_shared_from_this<TransformNode>
 {
 public:
     std::shared_ptr<TransformNode> parent;
@@ -145,7 +163,7 @@ public:
     {
     public:
         TransformNodeIterator() = default; // End iterator
-        explicit TransformNodeIterator(std::shared_ptr<TransformNode> root)
+        explicit TransformNodeIterator(std::shared_ptr<const TransformNode> root)
         {
             if (root)
             {
@@ -154,7 +172,7 @@ public:
         }
 
         // The dereference operator
-        std::shared_ptr<TransformNode> operator*() const
+        std::shared_ptr<const TransformNode> operator*() const
         {
             return stack.top();
         }
@@ -192,15 +210,15 @@ public:
         }
 
     private:
-        std::stack<std::shared_ptr<TransformNode>> stack;
+        std::stack<std::shared_ptr<const TransformNode>> stack;
     };
 
-    TransformNodeIterator begin()
+    TransformNodeIterator begin() const
     {
-        return TransformNodeIterator(std::shared_ptr<TransformNode>(this));
+        return TransformNodeIterator(shared_from_this());
     }
 
-    TransformNodeIterator end()
+    TransformNodeIterator end() const
     {
         return TransformNodeIterator();
     }

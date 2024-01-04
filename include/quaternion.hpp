@@ -133,6 +133,17 @@ struct Quaternion
 
     // TODO: Implement slerp, inverse, and conjugate, and overloads
 #pragma endregion
+
+#pragma region Quaternion overloads
+    Quaternion operator*(const Quaternion &q) const {
+        return Quaternion(
+            this->w * q.x + this->x * q.w + this->y * q.z - this->z * q.y,
+            this->w * q.y + this->y * q.w + this->z * q.x - this->x * q.z,
+            this->w * q.z + this->z * q.w + this->x * q.y - this->y * q.x,
+            this->w * q.w - this->x * q.x - this->y * q.y - this->z * q.z
+        );
+    }
+#pragma endregion
 };
 
 #endif // __QUATERNION_H__
