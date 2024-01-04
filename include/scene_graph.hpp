@@ -51,6 +51,15 @@ public:
 
         return transformationMatrix;
     }
+
+    /// @brief Returns a string representation of this transform
+    /// @details Returns a string representation of this transform
+    std::string toString() const
+    {
+        std::stringstream ss;
+        ss << "Transform(" << this->position.toString() << ", " << this->rotation.toString() << ", " << this->scale.toString() << ")";
+        return ss.str();
+    }
 };
 
 /// @brief Additonal information that is attached to a TransformNode for rendering
@@ -64,6 +73,15 @@ public:
     RenderInfo() : mesh(nullptr) {}
     RenderInfo(std::shared_ptr<Mesh> mesh) : mesh(mesh) {}
     RenderInfo(const RenderInfo &renderInfo) : mesh(renderInfo.mesh) {}
+
+    /// @brief Returns a string representation of this render info
+    /// @details Returns a string representation of this render info
+    std::string toString() const
+    {
+        std::stringstream ss;
+        ss << "RenderInfo(" << this->mesh->toString() << ")";
+        return ss.str();
+    }
 };
 
 /// @brief A node in the scene graph
@@ -110,11 +128,23 @@ public:
         return this->transform.toTransformationMatrix();
     }
 
+    /// @brief returns the string representation of this node
+    /// @details returns the string representation of this node
+    std::string toString() const
+    {
+        std::stringstream ss;
+        ss << "TransformNode(\n";
+        ss << "  " << this->transform.toString() << ",\n";
+        ss << "  " << this->renderInfo.toString() << "\n";
+        return ss.str();
+    }
+
+
     // Iterator setup
     class TransformNodeIterator
     {
     public:
-        TransformNodeIterator(std::shared_ptr<TransformNode> rootNode)
+        TransformNodeIterator(const TransformNode *rootNode)
         {
             // Perform depth-first search starting from the root node
             if (rootNode != nullptr)
@@ -124,7 +154,7 @@ public:
         }
 
         // Overload the * operator to return the current node
-        std::shared_ptr<TransformNode> operator*() const
+        const TransformNode* operator*() const
         {
             return currentNode;
         }
@@ -140,7 +170,8 @@ public:
                 // Traverse the children of the current node
                 for (auto child : currentNode->children)
                 {
-                    traverse(child);
+                    const TransformNode *childPtr = child.get();
+                    traverse(childPtr);
                 }
             }
             else
@@ -159,22 +190,22 @@ public:
         }
 
     private:
-        std::shared_ptr<TransformNode> currentNode;
-        std::stack<std::shared_ptr<TransformNode>> nodeStack;
+        const TransformNode *currentNode;
+        std::stack<const TransformNode *> nodeStack;
 
         // Helper function to perform depth-first search
-        void traverse(std::shared_ptr<TransformNode> node)
+        void traverse(const TransformNode *node)
         {
             nodeStack.push(node);
         }
     };
 
-    TransformNodeIterator begin()
+    TransformNodeIterator begin() const
     {
-        return TransformNodeIterator(std::shared_ptr<TransformNode>(this));
+        return TransformNodeIterator(this);
     }
 
-    TransformNodeIterator end()
+    TransformNodeIterator end() const
     {
         return TransformNodeIterator(nullptr);
     }

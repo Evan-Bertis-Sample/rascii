@@ -16,56 +16,48 @@ Controls App::controls = Controls();
 
 App::App() : _display(OUTPUT_WIDTH, OUTPUT_HEIGHT)
 {
-    std::cout << "Initializing RASCII\n"; 
+    std::cout << "Creating RASCII\n";
 }
 
 void App::init()
 {
+    std::cout << "Initializing RASCII\n";
     this->_inputListener = App::controls.getInputListener();
+    std::cout << "Initialized RASCII\n";
 }
 
 void App::run()
 {
-    // std::shared_ptr<Texture> texPtr = std::make_shared<Texture>(OUTPUT_WIDTH, OUTPUT_HEIGHT, Color::greyscale(0.5f));
-    // TextureDrawer drawer(texPtr);
-    
-    // drawer.drawLine(Vec(0, 0, 0), Vec(OUTPUT_WIDTH, OUTPUT_HEIGHT, 0), Color::greyscale(1.0f));
-    // drawer.fillCircle(Vec(OUTPUT_WIDTH / 2, OUTPUT_HEIGHT / 2, 0), 10, Color::greyscale(1.0f));
-    // // drawer.fillTriangle(Vec(0, 0, 0), Vec(OUTPUT_WIDTH, 0, 0), Vec(OUTPUT_WIDTH / 2, OUTPUT_HEIGHT, 0), Color::greyscale(1.0f));
-    // // draw a more scalene, obtuse triangle
-    // drawer.fillTriangle(Vec(5, 5, 0), 
-    //                     Vec(10, 25, 0), 
-    //                     Vec(25, 10, 0), 
-    //                     Color::greyscale(0));
-
-
-    RenderSettings settings = RenderSettings(OUTPUT_WIDTH, OUTPUT_HEIGHT, 90.0f, 0.1f, 100.0f);
+    RenderSettings settings(OUTPUT_WIDTH, OUTPUT_HEIGHT, 90.0f, 0.1f, 100.0f);
+    std::cout << settings.toString() << "\n";
     RasciiRenderer renderer = RasciiRenderer(settings);
+    renderer.prepare();
 
     // create the scene graph
     SceneGraph sceneGraph = SceneGraph();
     Mesh mesh = Mesh::centeredQuad();
+    std::cout << mesh.toString() << "\n";
 
     // create the transform node
     std::shared_ptr<Mesh> meshPtr = std::make_shared<Mesh>(mesh);
+    std::cout << meshPtr->toString() << "\n";
     RenderInfo renderInfo = RenderInfo(meshPtr);
     std::shared_ptr<TransformNode> transformNode = std::make_shared<TransformNode>(Transform(), renderInfo);
-
     // add the transform node to the scene graph
     sceneGraph.addChild(transformNode);
 
+    std::cout << "Created scene graph\n";
     // create the displayer
-    AsciiDisplay displayer = AsciiDisplay(OUTPUT_WIDTH, OUTPUT_HEIGHT);
+    this->_inputListener->listen();
+    // render the scene graph
+    renderer.render(sceneGraph);
+    // draw the output
+    this->_display.draw(*renderer.getOutput());
 
     // update loop
-    while (true)
-    {
-        this->_inputListener->listen();
-        // render the scene graph
-        renderer.render(sceneGraph);
-        // draw the output
-        displayer.draw(*renderer.getOutput());
-    }
+    // while (true)
+    // {
+    // }
 }
 
 void App::onExit(int exitCode)

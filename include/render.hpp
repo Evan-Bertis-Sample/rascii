@@ -49,14 +49,23 @@ public:
 };
 
 struct RenderSettings {
+public:
     int width;
     int height;
     float fov;
-    float near;
-    float far;
+    float nearPlane;
+    float farPlane;
 
-    RenderSettings() : width(0), height(0), fov(0.0f), near(0.0f), far(0.0f) {}
-    RenderSettings(int width, int height, float fov, float near, float far) : width(width), height(height), fov(fov), near(near), far(far) {}
+    // RenderSettings() : width(0), height(0), fov(0.0f), near(0.0f), far(0.0f) {}
+    RenderSettings(int width, int height, float fov, float near, float far) : width(width), height(height), fov(fov), nearPlane(near), farPlane(far) {}
+    RenderSettings(const RenderSettings& settings) : width(settings.width), height(settings.height), fov(settings.fov), nearPlane(settings.nearPlane), farPlane(settings.farPlane) {}
+
+    std::string toString() const
+    {
+        std::stringstream ss;
+        ss << "RenderSettings(" << this->width << ", " << this->height << ", " << this->fov << ", " << this->nearPlane << ", " << this->farPlane << ")";
+        return ss.str();
+    }
 };
 
 /// @brief The RASCII renderer
@@ -68,16 +77,12 @@ public:
     /// @details Initializes the renderer to the default values
     RasciiRenderer();
 
-
     /// @brief Constructor
     /// @details Initializes the renderer to the given values
     RasciiRenderer(RenderSettings settings) : _settings(settings)
     {
         this->_outputPtr = std::make_shared<Texture>(settings.width, settings.height);
         this->_textureDrawer = TextureDrawer(this->_outputPtr);
-
-        // calculate the matrices
-        this->generateMatrices();
     }
 
     /// @brief Renders the given scene graph to the output
@@ -85,9 +90,12 @@ public:
     {
         // fill the texture with black
         this->_textureDrawer.fill(Color::greyscale(0.0f));
-
-        for (auto &node : sceneGraph)
+        std::cout << "Rendering scene graph\n";
+        for (const TransformNode* node : sceneGraph)
         {
+            std::cout << "Rendering node\n";
+            std::cout << node->toString() << "\n";
+
             Transform transform = node->transform;
             Matrix transformationMatrix = transform.toTransformationMatrix();
 
@@ -96,6 +104,7 @@ public:
 
             for (auto &triangle : transformedMesh)
             {
+                std::cout << "Rendering triangle\n";
                 // convert the triangle from world space to screen space
                 Vec v1 = this->worldToTexture(triangle.v1.position);
                 Vec v2 = this->worldToTexture(triangle.v2.position);
@@ -111,7 +120,7 @@ public:
     /// @details This function is called before rendering
     void prepare()
     {
-
+        this->generateMatrices();
     }
 
     /// @brief Cleanup output
@@ -170,16 +179,16 @@ private:
         // generate the projection matrix
         float aspectRatio = (float)this->_settings.width / (float)this->_settings.height;
         float fov = this->_settings.fov;
-        float near = this->_settings.near;
-        float far = this->_settings.far;
+        float nearPlane = this->_settings.nearPlane;
+        float farPlane = this->_settings.farPlane;
         float fovRad = 1.0f / tanf(fov * 0.5f / 180.0f * 3.14159f);
-        float range = far - near;
+        float range = farPlane - nearPlane;
 
         this->_projectionMatrix = Matrix();
         this->_projectionMatrix.set(0, 0, aspectRatio * fovRad);
         this->_projectionMatrix.set(1, 1, fovRad);
-        this->_projectionMatrix.set(2, 2, -far / range);
-        this->_projectionMatrix.set(3, 2, (-far * near) / range);
+        this->_projectionMatrix.set(2, 2, -farPlane / range);
+        this->_projectionMatrix.set(3, 2, (-farPlane * nearPlane) / range);
         this->_projectionMatrix.set(2, 3, -1.0f);
 
         // generate the view matrix

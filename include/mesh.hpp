@@ -127,12 +127,15 @@ public:
 
     /// @brief Default constructor
     /// @details Initializes the mesh to the default values
-    Mesh() {}
+    Mesh() : triangles(std::vector<Triangle>()) {}
 
     /// @brief Constructor
     /// @details Initializes the mesh to the given values
     /// @param triangles The triangles of the mesh
-    Mesh(std::vector<Triangle> triangles) : triangles(triangles) {}
+    Mesh(std::vector<Triangle> triangles) : triangles(triangles) {
+        // shrink the vector to fit
+        this->triangles.shrink_to_fit();
+    }
 
     /// @brief Copy constructor
     /// @details Initializes the mesh to the given mesh
@@ -155,13 +158,18 @@ public:
 
     /// @brief Returns the number of vertices in the mesh
     int getVertexCount() const {
-        return this->triangles.size() * 3;
+        return this->getTriangleCount() * 3;
     }
 
     Mesh transform(const Matrix& transformationMatrix) const {
         Mesh transformedMesh = Mesh();
-        transformedMesh.triangles = std::vector<Triangle>(this->triangles.size());
-        for (int i = 0; i < this->triangles.size(); i++) {
+        int triCount = this->getTriangleCount();
+        if (triCount == 0) {
+            return transformedMesh;
+        }
+        transformedMesh.triangles = std::vector<Triangle>(triCount);
+        for (int i = 0; i < triCount; i++) {
+            std::cout << "Transforming triangle " << i << std::endl;
             Triangle triangle = this->triangles[i];
             transformedMesh.triangles[i] = Triangle(
                 MeshVertex(transformationMatrix * triangle.v1.position, transformationMatrix * triangle.v1.normal),
@@ -170,6 +178,19 @@ public:
             );
         }
         return transformedMesh;
+    }
+
+    std::string toString() const {
+        std::stringstream ss;
+        ss << "Mesh(" << std::endl;
+        ss << "  " << "Triangle Count: " << this->getTriangleCount() << std::endl;
+        ss << "  " << "Vertex Count: " << this->getVertexCount() << std::endl;
+        ss << "  " << "Triangles:" << std::endl; 
+        for (const Triangle& triangle : this->triangles) {
+            ss << "  " << triangle.toString() << std::endl;
+        }
+        ss << ")";
+        return ss.str();
     }
 
     // iterator
@@ -183,7 +204,7 @@ public:
     iterator end() {
         return this->triangles.end();
     }
-    
+
 };
 
 /// @brief An interface that all mesh importers must implement

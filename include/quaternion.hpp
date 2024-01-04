@@ -122,6 +122,15 @@ struct Quaternion
         return rotationMatrix;
     }
 
+    /// @brief Returns a string representation of this quaternion
+    /// @details Returns a string representation of this quaternion
+    std::string toString() const
+    {
+        std::stringstream ss;
+        ss << "Quaternion(" << this->x << ", " << this->y << ", " << this->z << ", " << this->w << ")";
+        return ss.str();
+    }
+
     // TODO: Implement slerp, inverse, and conjugate, and overloads
 #pragma endregion
 };

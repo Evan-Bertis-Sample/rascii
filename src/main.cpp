@@ -6,7 +6,7 @@
 // Built purely for fun, and to learn more about 3D graphics
 //
 
-
+#include <iostream>
 #include <signal.h>
 #include "app.hpp"
 
@@ -18,9 +18,9 @@ int main() {
         app.onExit(signal);
     });
 
+    std::cout << "Starting RASCII\n";
     // initialize the app
-    app.init();
-    
+    app.init();   
     // run the app
     app.run();
 

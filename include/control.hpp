@@ -22,6 +22,7 @@ public:
     Controls() {
         std::cout << "Initializing controls..." << std::endl;
         this->_inputListener = std::make_shared<InputListener>();
+        std::cout << "Controls initialized" << std::endl;
     }
 
     std::shared_ptr<InputListener> getInputListener() const {
