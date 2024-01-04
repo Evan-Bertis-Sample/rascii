@@ -41,6 +41,25 @@ struct Matrix
     {
         memcpy(this->elements, m.elements, sizeof(float) * 16);
     }
+
+    /// @brief Constructor
+    /// @details Constructs a translation matrix from the given vector
+    /// @param v The vector to construct the translation matrix from
+    static Matrix translation(const Vec &v)
+    {
+        // translation matrix
+        // 1 0 0 x
+        // 0 1 0 y
+        // 0 0 1 z
+        // 0 0 0 1
+
+        Matrix result;
+        result.set(0, 3, v.x);
+        result.set(1, 3, v.y);
+        result.set(2, 3, v.z);
+        std::cout << result.toString() << std::endl;
+        return result;
+    }
 #pragma endregion
 
 #pragma region Matrix Methods

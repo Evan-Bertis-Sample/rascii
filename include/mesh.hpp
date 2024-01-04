@@ -171,13 +171,19 @@ public:
         for (int i = 0; i < triCount; i++) {
             std::cout << "Transforming triangle " << i << std::endl;
             Triangle triangle = this->triangles[i];
-            transformedMesh.triangles[i] = Triangle(
+            Triangle newTri = Triangle(
                 MeshVertex(transformationMatrix * triangle.v1.position, transformationMatrix * triangle.v1.normal),
                 MeshVertex(transformationMatrix * triangle.v2.position, transformationMatrix * triangle.v2.normal),
                 MeshVertex(transformationMatrix * triangle.v3.position, transformationMatrix * triangle.v3.normal)
             );
+            transformedMesh.triangles[i] = newTri;
         }
         return transformedMesh;
+    }
+
+    Mesh move(const Vec& translation) const {
+        Matrix transformationMatrix = Matrix::translation(translation);
+        return this->transform(transformationMatrix);
     }
 
     std::string toString() const {

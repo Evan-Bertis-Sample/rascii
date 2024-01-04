@@ -16,14 +16,11 @@ Controls App::controls = Controls();
 
 App::App() : _display(OUTPUT_WIDTH, OUTPUT_HEIGHT)
 {
-    std::cout << "Creating RASCII\n";
 }
 
 void App::init()
 {
-    std::cout << "Initializing RASCII\n";
     this->_inputListener = App::controls.getInputListener();
-    std::cout << "Initialized RASCII\n";
 }
 
 void App::run()
@@ -36,17 +33,16 @@ void App::run()
     // create the scene graph
     SceneGraph sceneGraph = SceneGraph();
     Mesh mesh = Mesh::centeredQuad();
-    std::cout << mesh.toString() << "\n";
+    mesh = mesh.move(Vec(0.0f, 0.0f, 25.0f));
 
     // create the transform node
-    std::shared_ptr<Mesh> meshPtr = std::make_shared<Mesh>(mesh);
-    std::cout << meshPtr->toString() << "\n";
+    std::shared_ptr<Mesh> meshPtr = std::make_shared<Mesh>(mesh);;
     RenderInfo renderInfo = RenderInfo(meshPtr);
     std::shared_ptr<TransformNode> transformNode = std::make_shared<TransformNode>(Transform(), renderInfo);
     // add the transform node to the scene graph
     sceneGraph.addChild(transformNode);
 
-    std::cout << "Created scene graph\n";
+    // std::cout << "Created scene graph\n";
     // create the displayer
     this->_inputListener->listen();
     // render the scene graph

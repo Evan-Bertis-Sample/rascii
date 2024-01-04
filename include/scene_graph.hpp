@@ -79,7 +79,8 @@ public:
     std::string toString() const
     {
         std::stringstream ss;
-        ss << "RenderInfo(" << this->mesh->toString() << ")";
+        std::string meshStr = this->mesh == nullptr ? "nullptr" : this->mesh->toString();
+        ss << "RenderInfo(" << meshStr << ")";
         return ss.str();
     }
 };
@@ -94,7 +95,7 @@ public:
     Transform transform;
     RenderInfo renderInfo;
 
-    TransformNode() : parent(nullptr), children(std::vector<std::shared_ptr<TransformNode>>()), transform(Transform()) {}
+    TransformNode() : parent(nullptr), children(std::vector<std::shared_ptr<TransformNode>>()), transform(Transform()), renderInfo() {}
     TransformNode(Transform transform, RenderInfo rInfo) : parent(nullptr), children(std::vector<std::shared_ptr<TransformNode>>()), transform(transform), renderInfo(rInfo) {}
     TransformNode(const TransformNode &node) : parent(node.parent), children(node.children), transform(node.transform), renderInfo(node.renderInfo) {}
 
@@ -139,75 +140,69 @@ public:
         return ss.str();
     }
 
-
     // Iterator setup
     class TransformNodeIterator
     {
     public:
-        TransformNodeIterator(const TransformNode *rootNode)
+        TransformNodeIterator() = default; // End iterator
+        explicit TransformNodeIterator(std::shared_ptr<TransformNode> root)
         {
-            // Perform depth-first search starting from the root node
-            if (rootNode != nullptr)
+            if (root)
             {
-                traverse(rootNode);
+                stack.push(root);
             }
         }
 
-        // Overload the * operator to return the current node
-        const TransformNode* operator*() const
+        // The dereference operator
+        std::shared_ptr<TransformNode> operator*() const
         {
-            return currentNode;
+            return stack.top();
         }
 
-        // Overload the ++ operator to move to the next node
+        // The increment operator
         TransformNodeIterator &operator++()
         {
-            if (!nodeStack.empty())
+            if (stack.empty())
             {
-                currentNode = nodeStack.top();
-                nodeStack.pop();
-
-                // Traverse the children of the current node
-                for (auto child : currentNode->children)
-                {
-                    const TransformNode *childPtr = child.get();
-                    traverse(childPtr);
-                }
+                throw std::out_of_range("Iterator cannot be incremented past end");
             }
-            else
+
+            auto current = stack.top();
+            stack.pop();
+
+            for (auto it = current->children.rbegin(); it != current->children.rend(); ++it)
             {
-                // If there are no more nodes, set the iterator to nullptr
-                currentNode = nullptr;
+                stack.push(*it);
             }
 
             return *this;
         }
 
-        // Overload the != operator to check for inequality
+        // The equality comparison operator
+        bool operator==(const TransformNodeIterator &other) const
+        {
+            return (stack.empty() && other.stack.empty()) ||
+                   (!stack.empty() && !other.stack.empty() && stack.top() == other.stack.top());
+        }
+
+        // The inequality comparison operator
         bool operator!=(const TransformNodeIterator &other) const
         {
-            return currentNode != other.currentNode;
+            return !(*this == other);
         }
 
     private:
-        const TransformNode *currentNode;
-        std::stack<const TransformNode *> nodeStack;
-
-        // Helper function to perform depth-first search
-        void traverse(const TransformNode *node)
-        {
-            nodeStack.push(node);
-        }
+        std::stack<std::shared_ptr<TransformNode>> stack;
     };
 
-    TransformNodeIterator begin() const
+    TransformNodeIterator begin()
     {
-        return TransformNodeIterator(this);
+        return TransformNodeIterator(std::shared_ptr<TransformNode>(this));
     }
 
-    TransformNodeIterator end() const
+    TransformNodeIterator end()
     {
-        return TransformNodeIterator(nullptr);
+        return TransformNodeIterator();
     }
 };
 
