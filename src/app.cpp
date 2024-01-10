@@ -2,6 +2,7 @@
 #include <memory>
 #include <stdlib.h>
 #include <signal.h>
+#include <Windows.h>
 
 #include "app.hpp"
 #include "tex.hpp"
@@ -9,13 +10,20 @@
 #include "runtime_input.hpp"
 #include "render.hpp"
 
-const int OUTPUT_WIDTH = 128;
-const int OUTPUT_HEIGHT = 70;
 
 Controls App::controls = Controls();
 
-App::App() : _display(OUTPUT_WIDTH, OUTPUT_HEIGHT)
+App::App()
 {
+    // get the height and width of the console
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+
+    this->OUTPUT_HEIGHT = csbi.srWindow.Bottom - csbi.srWindow.Top;
+    this->OUTPUT_WIDTH = csbi.srWindow.Right - csbi.srWindow.Left;
+
+    // initialize the display
+    this->_display = AsciiDisplay(this->OUTPUT_WIDTH, this->OUTPUT_HEIGHT);
 }
 
 void App::init()

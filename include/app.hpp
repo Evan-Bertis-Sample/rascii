@@ -37,6 +37,9 @@ public:
 private:
     std::shared_ptr<InputListener> _inputListener;
     AsciiDisplay _display;
+
+    int OUTPUT_HEIGHT;
+    int OUTPUT_WIDTH;
 };
 
 #endif // __APP_H__

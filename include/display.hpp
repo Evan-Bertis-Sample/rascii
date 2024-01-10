@@ -41,6 +41,21 @@ public:
 /// @details The terminal must be large enough to fit the texture
 class AsciiDisplay : public IDisplay {
 public:
+
+    /// @brief Default constructor
+    /// @details Initializes the Display to the default values
+    AsciiDisplay() : _width(1), _height(1) {
+        // malloc the output buffer
+        int bufferSize = this->getBufferSize();
+        this->_outputBuffer = (char*)malloc(sizeof(char) * bufferSize);
+        this->_outputBuffer[bufferSize - 1] = '\0';
+
+        // create the rewind string -- brings the cursor to the top left
+        sprintf(rewindStr, "\x1b[%dA", _height+1);
+        // create the cleanup string -- clears the terminal
+        sprintf(cleanupStr, "\x1b[%dA\x1b[J", _height+1);
+    }
+
     /// @brief Constructor
     /// @details Initializes the Display to the given values
     /// @param width The width of the terminal
@@ -55,6 +70,21 @@ public:
         sprintf(rewindStr, "\x1b[%dA", height+1);
         // create the cleanup string -- clears the terminal
         sprintf(cleanupStr, "\x1b[%dA\x1b[J", height+1);
+    }
+
+    /// @brief Copy constructor
+    /// @details Initializes the Display to the values of the given Display
+    /// @param other The Display to copy
+    AsciiDisplay(const AsciiDisplay& other) : _width(other._width), _height(other._height) {
+        // malloc the output buffer
+        int bufferSize = this->getBufferSize();
+        this->_outputBuffer = (char*)malloc(sizeof(char) * bufferSize);
+        this->_outputBuffer[bufferSize - 1] = '\0';
+
+        // create the rewind string -- brings the cursor to the top left
+        sprintf(rewindStr, "\x1b[%dA", _height+1);
+        // create the cleanup string -- clears the terminal
+        sprintf(cleanupStr, "\x1b[%dA\x1b[J", _height+1);
     }
 
     /// @brief Prepares the Display for rendering
@@ -126,8 +156,8 @@ public:
 
 private:
     // the width and height of the terminal
-    const int _width;
-    const int _height;
+    int _width;
+    int _height;
 
     char* _outputBuffer;
     char rewindStr[20];
@@ -137,7 +167,7 @@ private:
 
     // used to convert luminance to ascii characters
     const char* _luminanceTable = " .:-=+*#%@";
-    const int _luminanceTableSize = 10;
+    int _luminanceTableSize = 10;
 
     /// @brief Converts the given luminance to an ascii character
     /// @details This function converts the given luminance to an ascii character

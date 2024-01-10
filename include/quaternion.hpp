@@ -85,6 +85,10 @@ struct Quaternion
     {
         return Quaternion(pitch, yaw, roll);
     }
+
+    /// @brief Slerps between two quaternions
+    /// @details Slerps between two quaternions
+    
 #pragma endregion
 
 #pragma region Quaternion Methods
@@ -131,10 +135,46 @@ struct Quaternion
         return ss.str();
     }
 
-    // TODO: Implement slerp, inverse, and conjugate, and overloads
+    /// @brief Returns the magnitude of this quaternion
+    /// @details Returns the magnitude of this quaternion
+    float magnitude() const
+    {
+        return sqrt(this->x * this->x + this->y * this->y + this->z * this->z + this->w * this->w);
+    }
+
+    /// @brief Returns the normalized version of this quaternion
+    /// @details Returns the normalized version of this quaternion
+    Quaternion normalized() const
+    {
+        float magnitude = this->magnitude();
+        return Quaternion(this->x / magnitude, this->y / magnitude, this->z / magnitude, this->w / magnitude);
+    }
+
+    /// @brief Normalizes this Quaternion
+    /// @details Normalizes this Quaternion
+    void normalize()
+    {
+        float magnitude = this->magnitude();
+        this->x /= magnitude;
+        this->y /= magnitude;
+        this->z /= magnitude;
+        this->w /= magnitude;
+    }    
+    // TODO: Implement slerp, inverse, and overloads
+
+    /// @brief Returns the inverse of this quaternion
+    /// @details Returns the inverse of this quaternion
+    Quaternion inverse() const
+    {
+        return Quaternion(-this->x, -this->y, -this->z, this->w);
+    }    
 #pragma endregion
 
 #pragma region Quaternion overloads
+
+    /// @brief Overload for the multiplication operator
+    /// @param q The quaternion to multiply by
+    /// @return The result of the multiplication
     Quaternion operator*(const Quaternion &q) const {
         return Quaternion(
             this->w * q.x + this->x * q.w + this->y * q.z - this->z * q.y,
@@ -143,6 +183,7 @@ struct Quaternion
             this->w * q.w - this->x * q.x - this->y * q.y - this->z * q.z
         );
     }
+
 #pragma endregion
 };
 
